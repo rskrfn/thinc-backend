@@ -20,10 +20,10 @@
 
 ## Contents
 1. [About The Project](#about-the-project)
-  - [Built With](#built-with)
+⋅⋅⋅⋅⋅⋅⋅⋅⋅- [Built With](#built-with)
 2. [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
+⋅⋅⋅⋅⋅⋅⋅⋅⋅- [Prerequisites](#prerequisites)
+⋅⋅⋅⋅⋅⋅⋅⋅⋅- [Installation](#installation)
 3. [Usage](#usage)
 4. [Roadmap](#roadmap)
 5. [Contact](#contact)
