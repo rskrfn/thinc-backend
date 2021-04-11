@@ -1,5 +1,5 @@
 let { writeError, writeResponse } = require("../helpers/Header");
-let { getCourses, courseSort, searchCourse } = require("../models/CoursesSort");
+let { getCourses, getCoursesPagination, courseSort, searchCourse } = require("../models/CoursesSort");
 let { getUserId, myClass, newClass } = require("../models/UserCourses");
 let mysql = require("mysql");
 
@@ -10,6 +10,17 @@ const getAllCourses = async (req, res) => {
       return writeResponse(res, false, 400, "No Data");
     }
     return writeResponse(res, true, 200, getallcourse);
+  } catch (err) {
+    return writeResponse(res, false, 500, err);
+  }
+};
+const allCoursePagination = async (req, res) => {
+  try {
+    let allcoursepagination = await getCourses();
+    if (!allcoursepagination) {
+      return writeResponse(res, false, 400, "No Data");
+    }
+    return writeResponse(res, true, 200, allcoursepagination);
   } catch (err) {
     return writeResponse(res, false, 500, err);
   }
@@ -93,6 +104,7 @@ const coursesSort = async (req, res) => {
 
 module.exports = {
   getAllCourses,
+  allCoursePagination,
   getMyClass,
   getNewClass,
   coursesSort,
