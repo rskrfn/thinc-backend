@@ -1,4 +1,4 @@
-let {getUserLevel, addcourse, deletecourse, searchcourse} = require("../models/CourseAddDelete")
+let {getUserLevel, addcourse, deletecourse, searchcourse} = require("../models/Course")
 let {writeResponse, writeError} = require("../helpers/Header")
 
 const createCourse = async (req, res) => {

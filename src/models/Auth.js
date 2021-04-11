@@ -89,9 +89,21 @@ let loginUser = (usernameemail, password) => {
   });
 };
 
+let passwordChange = (newpassword, email) => {
+  return new Promise((resolve, reject) => {
+    const qs = "UPDATE `users` SET `password`= ? WHERE `email` = ?";
+    db.query(qs, [newpassword, email], function (err, result) {
+      if (err) return reject(err);
+      return resolve(result);
+    });
+  });
+};
+
+
 module.exports = {
   usernameCheck,
   emailCheck,
   registerUser,
   loginUser,
+  passwordChange
 };

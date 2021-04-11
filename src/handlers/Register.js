@@ -1,4 +1,4 @@
-let { usernameCheck, emailCheck, registerUser } = require("../models/Register");
+let { usernameCheck, emailCheck, registerUser } = require("../models/Auth");
 let { writeResponse, writeError } = require("../helpers/Header");
 
 const register = async (req, res) => {

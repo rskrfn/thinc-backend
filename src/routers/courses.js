@@ -2,23 +2,23 @@ const Router = require("express").Router();
 
 //import
 let {
-  getAllCourses,
+  allCoursePagination,
   getMyClass,
   getNewClass,
   coursesSort,
   searchCoursebyName,
 } = require("../handlers/Courses");
-let {createCourse} = require("../handlers/Fasilitator")
-let {deleteCourse} = require("../handlers/Fasilitator")
-let authorize = require('../middlewares/Authorize')
+let { createCourse } = require("../handlers/Fasilitator");
+let { deleteCourse } = require("../handlers/Fasilitator");
+let authorize = require("../middlewares/Authorize");
 
-Router.get("/all", getAllCourses);
+Router.get("/all", allCoursePagination);
 Router.get("/myclass", getMyClass);
 Router.get("/newclass", getNewClass); //opsional
 
 Router.get("/params", coursesSort);
 Router.get("/", searchCoursebyName);
-Router.post("/addcourse",authorize.facilitatorOnly, createCourse); 
-Router.delete("/deletecourse",authorize.facilitatorOnly, deleteCourse);
+Router.post("/addcourse", authorize.facilitatorOnly, createCourse);
+Router.delete("/deletecourse", authorize.facilitatorOnly, deleteCourse);
 
 module.exports = Router;

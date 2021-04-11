@@ -1,4 +1,4 @@
-let { emailCheck, passwordChange } = require("../models/Reset");
+let { emailCheck, passwordChange } = require("../models/Auth");
 let { writeResponse, writeError } = require("../helpers/Header");
 
 const passwordUpdate = async (req, res) => {

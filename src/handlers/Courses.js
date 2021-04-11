@@ -1,7 +1,16 @@
-let { writeError, writeResponse } = require("../helpers/Header");
-let { getCourses, getCoursesPagination, courseSort, searchCourse } = require("../models/CoursesSort");
-let { getUserId, myClass, newClass } = require("../models/UserCourses");
+/* eslint-disable no-undef */
 let mysql = require("mysql");
+let { writeError, writeResponse } = require("../helpers/Header");
+let {
+  getCourses,
+  getCoursesPagination,
+  courseSort,
+  searchCourse,
+  getUserId,
+  myClass,
+  newClass,
+} = require("../models/Course");
+
 
 const getAllCourses = async (req, res) => {
   try {
@@ -16,11 +25,23 @@ const getAllCourses = async (req, res) => {
 };
 const allCoursePagination = async (req, res) => {
   try {
-    let allcoursepagination = await getCourses();
+    let { query, baseUrl, path, hostname, protocol } = req;
+    let allcoursepagination = await getCoursesPagination(query);
     if (!allcoursepagination) {
       return writeResponse(res, false, 400, "No Data");
     }
-    return writeResponse(res, true, 200, allcoursepagination);
+    const { count, page, limit, result } = allcoursepagination;
+    let totalPage = Math.ceil(count / limit);
+    const url =
+      protocol + "://" + hostname + ":" + process.env.PORT + baseUrl + path;
+    let prev =
+      page === 1 ? null : url + `?page=${page - 1}&limit=${query.limit || 5}`;
+    let next =
+      page === totalPage
+        ? null
+        : url + `?page=${page + 1}&limit=${query.limit || 5}`;
+    const info = { count, page, totalPage, next, prev, result };
+    return writeResponse(res, true, 200, "Data Received", info);
   } catch (err) {
     return writeResponse(res, false, 500, err);
   }
@@ -48,7 +69,9 @@ const getMyClass = async (req, res) => {
       return writeResponse(res, false, 400, "Enter User Email");
     }
     let UserId = await getUserId(email);
-    console.log(UserId);
+    if (!UserId) {
+      return writeResponse(res, true, 200, "This user hasn't registered in any class")
+    }
     if (UserId === false) {
       return writeResponse(res, false, 400, "Email Not Found");
     }

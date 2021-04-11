@@ -1,4 +1,4 @@
-let {getUserId, registerCourse, courseSearch} = require("../models/UserCourses")
+let {getUserId, registerCourse, courseSearch} = require("../models/Course")
 let {writeResponse, writeError} = require("../helpers/Header")
 
 const courseRegister = async (req, res) => {
