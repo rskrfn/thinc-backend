@@ -103,7 +103,7 @@ Should be adding more features and continuous improvement on a weekly basis unti
 
 <!-- API Docs -->
 ## API Documentation
-Postman Documentation [Thinc](#)
+Postman Documentation [Thinc](https://documenter.getpostman.com/view/15083162/TzJoE1R1)
 
 <!-- CONTACT -->
 

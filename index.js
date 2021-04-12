@@ -18,4 +18,5 @@ const urlEncodedParser = express.urlencoded({ extended: false });
 app.use(cors());
 app.use(jsonParser);
 app.use(urlEncodedParser);
+app.use(express.static("public"))
 app.use(Router);

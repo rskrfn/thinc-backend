@@ -16,7 +16,7 @@ Router.get("/all", allCoursePagination);
 Router.get("/myclass", getMyClass);
 Router.get("/newclass", getNewClass); //opsional
 
-Router.get("/params", coursesSort);
+Router.get("/", coursesSort);
 Router.get("/", searchCoursebyName);
 Router.post("/addcourse", authorize.facilitatorOnly, createCourse);
 Router.delete("/deletecourse", authorize.facilitatorOnly, deleteCourse);

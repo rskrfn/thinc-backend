@@ -13,7 +13,6 @@ const passwordUpdate = async (req, res) => {
       return writeResponse(res, false, 400, "Email Not Registered")
     }
     await passwordChange(newpassword, email)
-    console.log(emailAvailable[0].email)
     return writeResponse(res, true, 200, ("Password Changed"))
   } catch (err) {
     return writeError(res, err)
