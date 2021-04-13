@@ -2,10 +2,10 @@
 -- version 5.1.0
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Apr 09, 2021 at 04:15 PM
+-- Host: 127.0.0.1
+-- Generation Time: Apr 13, 2021 at 06:00 AM
 -- Server version: 10.4.18-MariaDB
--- PHP Version: 7.4.16
+-- PHP Version: 7.3.27
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -166,6 +166,8 @@ CREATE TABLE `users` (
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `phone` varchar(255) NOT NULL,
+  `display_picture` varchar(255) DEFAULT NULL,
   `user_level` int(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -173,10 +175,11 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `username`, `email`, `password`, `user_level`) VALUES
-(101, 'Emir Kharisma', 'kharismaemir', 'emirkharisma@arkademy.com', '$2b$10$ftRrWHWxtt56NL98xZNsSeFumLsJN.zDS6moY/ELDJY7Go2Df7H0m', 2),
-(102, 'Arka', 'arkademy', 'arka@arkademy.com', '$2b$10$wwgMMVuR.XmEsJRXlf5Nu.xOZtPked5TOGpLTDSf6lWPxnlFGUM4q', 1),
-(103, 'Mylo', 'longboi', 'mylo@catsmafia.com', '$2b$10$wbSr7jJ4TUNSTa5yzLce3OE6YYSToFBIeHfXZ6dKBsR1gSxgjgM1y', 2);
+INSERT INTO `users` (`id`, `name`, `username`, `email`, `password`, `phone`, `display_picture`, `user_level`) VALUES
+(101, 'Emir Kharisma', 'kharismaemir', 'emirkharisma@arkademy.com', '$2b$10$ftRrWHWxtt56NL98xZNsSeFumLsJN.zDS6moY/ELDJY7Go2Df7H0m', '0', '', 2),
+(102, 'Arka', 'arkademy', 'arka@arkademy.com', '$2b$10$wwgMMVuR.XmEsJRXlf5Nu.xOZtPked5TOGpLTDSf6lWPxnlFGUM4q', '0', '', 1),
+(103, 'Mylo', 'longboi', 'mylo@catsmafia.com', '$2b$10$wbSr7jJ4TUNSTa5yzLce3OE6YYSToFBIeHfXZ6dKBsR1gSxgjgM1y', '0', '', 2),
+(104, 'Dummy Account', 'dummy', 'dummy@example.com', '$2b$10$L/9HYrlADF0oFw8Yy/o2s.wQMg7jfaQqiM/iJTi6cFilOmKnXM1pC', '088833332222', '/images/1618286070665_image.jpg', 2);
 
 -- --------------------------------------------------------
 
@@ -195,12 +198,12 @@ CREATE TABLE `user_course` (
 --
 
 INSERT INTO `user_course` (`id`, `user_id`, `course_id`) VALUES
-(1, 102, 300),
-(2, 102, 301),
-(3, 102, 302),
-(4, 102, 315),
-(5, 102, 316),
-(6, 102, 313);
+(1, 101, 300),
+(2, 101, 301),
+(3, 101, 302),
+(4, 101, 315),
+(5, 101, 316),
+(6, 101, 313);
 
 -- --------------------------------------------------------
 
@@ -269,7 +272,7 @@ ALTER TABLE `user_course`
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=320;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=323;
 
 --
 -- AUTO_INCREMENT for table `messages`
@@ -293,7 +296,7 @@ ALTER TABLE `subcourses`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=105;
 
 --
 -- AUTO_INCREMENT for table `user_course`
