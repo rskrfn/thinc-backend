@@ -16,8 +16,14 @@ const getUser = async (req, res) => {
 const updateProfile = async (req, res) => {
     try{
     let {file} = req;
-    let display_picture = file.length !== 0 ? `/images/${file.filename}` : null
-    let data = { ...req.body, display_picture}
+    let data = {}
+    let display_picture = file ? `/images/${file.filename}` : null
+    if (!display_picture) {
+        data = {...req.body}
+    }
+    if (display_picture) {
+        data = {...req.body, display_picture}
+    }
     console.log(data)
     let result = await updateUserProfile(data, req.body.email)
     console.log(result)
@@ -26,7 +32,7 @@ const updateProfile = async (req, res) => {
     }
     writeResponse(res, true, 200, "Data Changed")
     } catch (err) {
-        return writeError(res, err)
+        return console.log(err)
     }
 };
 
