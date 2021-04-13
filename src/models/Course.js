@@ -141,7 +141,6 @@ let getCoursesPagination = (query) => {
     const offset = (page - 1) * limit;
     db.query(paginatedquery, [limit, offset], (err, result) => {
       if (err) return reject(err);
-
       const qsCount = "SELECT COUNT(*) AS 'count' FROM courses";
       db.query(qsCount, (err, data) => {
         if (err) return reject(err);

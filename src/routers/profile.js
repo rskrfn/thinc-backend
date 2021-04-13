@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 const Router = require("express").Router();
 const { uploadDP, multerUpload } = require("../middlewares/Multer");
-const updateProfile = require('../handlers/Profile')
+const {getUser, updateProfile} = require('../handlers/Profile')
 
 Router.post("/upload", multerUpload.single("image"), function (req, res) {
   let { file } = req;
@@ -15,6 +15,6 @@ Router.post("/upload", multerUpload.single("image"), function (req, res) {
 //   res.status(200).json({ msg: "Image Uploaded", url });
 // });
 
-Router.patch("/coba", updateProfile)
+Router.patch("/coba", multerUpload.single("image"), updateProfile)
 
 module.exports = Router;
