@@ -15,6 +15,6 @@ Router.post("/upload", multerUpload.single("image"), function (req, res) {
 //   res.status(200).json({ msg: "Image Uploaded", url });
 // });
 
-Router.patch("/coba", multerUpload.single("image"), updateProfile)
+Router.patch("/", multerUpload.single("image"), updateProfile)
 
 module.exports = Router;

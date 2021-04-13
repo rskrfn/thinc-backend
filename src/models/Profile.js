@@ -15,19 +15,16 @@ let getUserProfile = (usernameemail) => {
 
 let updateUserProfile = (data, email) => {
   return new Promise((resolve, reject) => {
-    console.log([data, email]);
     const query = "UPDATE users SET ? WHERE email = ?";
     let password = data.password;
     data.password
       ? bcrypt.hash(password, 10, (err, hashedPass) => {
           if (err) {
-            console.log(err);
             return reject(err);
           }
           data.password = hashedPass;
           db.query(query, [data, email], function (err, result) {
             if (err) {
-              console.log(err);
               return reject(err);
             }
             if (result.affectedRows !== 0) {
@@ -38,7 +35,6 @@ let updateUserProfile = (data, email) => {
         })
       : db.query(query, [data, email], (err, result) => {
           if (err) {
-            console.log(err);
             return reject(err);
           }
           return resolve(result);

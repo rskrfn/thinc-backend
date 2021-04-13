@@ -17,6 +17,7 @@ const updateProfile = async (req, res) => {
     try{
     let {file} = req;
     let data = {}
+    console.log(file)
     let display_picture = file ? `/images/${file.filename}` : null
     if (!display_picture) {
         data = {...req.body}

@@ -6,7 +6,7 @@ const dpStorage = multer.diskStorage({
     cb(null, "./public/images/displaypicture");
   },
   filename: function (req, file, cb) {
-    let fileNameFormat = `${req.user.username}_${Date.now()}${path.extname(
+    let fileNameFormat = `${file.fieldname}_${Date.now()}${path.extname(
       file.originalname
     )}`;
     cb(null, fileNameFormat);
