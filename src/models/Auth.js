@@ -22,10 +22,11 @@ let emailCheck = (email) => {
     let emailquery = "SELECT u.email FROM users u WHERE u.email = ?";
     db.query(emailquery, email, function (err, result) {
       if (err) return reject(err);
+      console.log(result);
       if (result.length > 0) {
-        return resolve(result);
+        return resolve(false);
       }
-      return resolve(false);
+      return resolve(true);
     });
   });
 };
@@ -62,24 +63,24 @@ let loginUser = (usernameemail, password) => {
       // return resolve(result)
       bcrypt.compare(password, result[0].password, (err, isPassMatch) => {
         if (err) reject(err);
-        if (!isPassMatch) {
-          console.log(isPassMatch);
+        if (isPassMatch === false) {
           return resolve((result = false));
         }
-      });
-      let { username, role } = result[0];
-      let payload = {
-        username,
-        role,
-      };
-      let options = {
-        expiresIn: process.env.EXPIRE,
-        issuer: process.env.ISSUER,
-      };
-      jwt.sign(payload, process.env.SECRET_KEY, options, (err, token) => {
-        if (err) return reject(err);
-        console.log(process.env.EXPIRE);
-        resolve(token);
+        if (isPassMatch === true) {
+          let { username, role } = result[0];
+          let payload = {
+            username,
+            role,
+          };
+          let options = {
+            expiresIn: process.env.EXPIRE,
+            issuer: process.env.ISSUER,
+          };
+          jwt.sign(payload, process.env.SECRET_KEY, options, (err, token) => {
+            if (err) return reject(err);
+            resolve(token);
+          });
+        }
       });
     });
   });

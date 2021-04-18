@@ -16,7 +16,7 @@ const userRegister = async (req, res) => {
       return writeResponse(res, false, 400, "Username is taken");
     }
     let emailAvailable = await emailCheck(email);
-    // console.log("email avail " + emailAvailable);
+    console.log("email avail " + emailAvailable);
     if (emailAvailable === false) {
       return writeResponse(res, false, 400, "Email Already Registered");
     }
@@ -42,7 +42,6 @@ const userLogin = async (req, res) => {
     return writeResponse(res, true, 200, "Logged in", {token:UserAuth})
 
   } catch(err){
-    console.log(err)
     return writeError(res, err)
   }
 };
