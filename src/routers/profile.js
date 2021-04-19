@@ -6,7 +6,8 @@ const {getUser, updateProfile} = require('../handlers/Profile')
 Router.post("/upload", multerUpload.single("image"), function (req, res) {
   let { file } = req;
   let url = `/images/${file.filename}`;
-  res.status(200).json({ msg: "Upload Success", url });
+  let filename = file.filename
+  res.status(200).json({ msg: "Upload Success", filename, url });
 });
 
 // Router.patch("/", uploadDP.single("displaypicture"), function (req, res) {

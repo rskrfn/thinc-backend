@@ -40,8 +40,9 @@ const allCoursePagination = async (req, res) => {
       page === totalPage
         ? null
         : url + `?page=${page + 1}&limit=${query.limit || 5}`;
-    const info = { count, page, totalPage, next, prev, result };
-    return writeResponse(res, true, 200, "Data Received", info);
+    const info = {count, page, totalPage, next, prev}
+    const display = {info, result}
+    return writeResponse(res, true, 200, "Data Received", display);
   } catch (err) {
     return writeResponse(res, false, 500, err);
   }
