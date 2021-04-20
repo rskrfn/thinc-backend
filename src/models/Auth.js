@@ -67,9 +67,12 @@ let loginUser = (usernameemail, password) => {
           return resolve((result = false));
         }
         if (isPassMatch === true) {
-          let { username, role } = result[0];
+          let { id, email, name, username, role } = result[0];
           let payload = {
+            id,
             username,
+            name,
+            email,
             role,
           };
           let options = {
