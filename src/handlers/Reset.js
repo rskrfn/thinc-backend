@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 let { emailCheck, passwordChange } = require("../models/Auth");
 let { checkOTP } = require('../models/Reset')
 let { writeResponse, writeError } = require("../helpers/Response");
