@@ -1,6 +1,6 @@
 //import
 let {isenroled, getscore} = require("../models/Score")
-let {writeResponse, writeError} = require("../helpers/Header")
+let {writeResponse, writeError} = require("../helpers/Response")
 
 const getScore = async (req, res) => {
     let {email, coursename} = req.body

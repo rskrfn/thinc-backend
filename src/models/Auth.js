@@ -21,12 +21,12 @@ let emailCheck = (email) => {
   return new Promise((resolve, reject) => {
     let emailquery = "SELECT u.email FROM users u WHERE u.email = ?";
     db.query(emailquery, email, function (err, result) {
+
       if (err) return reject(err);
-      console.log(result);
       if (result.length > 0) {
-        return resolve(false);
+        return resolve(true);
       }
-      return resolve(true);
+      return resolve(false);
     });
   });
 };
@@ -75,14 +75,14 @@ let loginUser = (usernameemail, password) => {
             username,
             role,
           };
-          console.log(payload)
+          console.log(payload);
           let options = {
             expiresIn: process.env.EXPIRE,
             issuer: process.env.ISSUER,
           };
           jwt.sign(payload, process.env.SECRET_KEY, options, (err, token) => {
             if (err) return reject(err);
-            resolve(token);
+            resolve({ data: payload, token: token });
           });
         }
       });

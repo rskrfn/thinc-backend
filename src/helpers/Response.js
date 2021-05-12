@@ -7,8 +7,14 @@ let writeResponse = (res, success, status, message, data) => {
   res.status(status).json(response);
 };
 
-const writeError = (res, error) => {
-  res.status(500).json(new Error(error));
+let writeError = (res, status, message) => {
+  let success = false;
+  let error = {
+    success,
+    status,
+    message,
+  };
+  res.status(status).json(error);
 };
 
 module.exports = {

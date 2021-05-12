@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 const { getUserProfile, updateUserProfile } = require("../models/Profile");
-const { writeResponse, writeError } = require("../helpers/Header");
+const { writeResponse, writeError } = require("../helpers/Response");
 
 const getUser = async (req, res) => {
     try{

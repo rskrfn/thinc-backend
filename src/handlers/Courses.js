@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 let mysql = require("mysql");
-let { writeError, writeResponse } = require("../helpers/Header");
+let { writeError, writeResponse } = require("../helpers/Response");
 let {
   getCourses,
   getCoursesPagination,
@@ -10,7 +10,6 @@ let {
   myClass,
   newClass,
 } = require("../models/Course");
-
 
 const getAllCourses = async (req, res) => {
   try {
@@ -40,8 +39,8 @@ const allCoursePagination = async (req, res) => {
       page === totalPage
         ? null
         : url + `?page=${page + 1}&limit=${query.limit || 5}`;
-    const info = {count, page, totalPage, next, prev}
-    const display = {info, result}
+    const info = { count, page, totalPage, next, prev };
+    const display = { info, result };
     return writeResponse(res, true, 200, "Data Received", display);
   } catch (err) {
     return writeResponse(res, false, 500, err);
@@ -64,14 +63,19 @@ const searchCoursebyName = async (req, res) => {
 };
 
 const getMyClass = async (req, res) => {
-  let { email } = req.body;
+  let email = "emirkharisma@arkademy.com";
   try {
     if (!email) {
-      return writeResponse(res, false, 400, "Enter User Email");
+      return writeResponse(res, false, 401, "Enter User Email");
     }
     let UserId = await getUserId(email);
     if (!UserId) {
-      return writeResponse(res, true, 200, "This user hasn't registered in any class")
+      return writeResponse(
+        res,
+        true,
+        200,
+        "This user hasn't registered in any class"
+      );
     }
     if (UserId === false) {
       return writeResponse(res, false, 400, "Email Not Found");

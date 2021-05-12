@@ -1,5 +1,5 @@
 let {getUserId, registerCourse, courseSearch} = require("../models/Course")
-let {writeResponse, writeError} = require("../helpers/Header")
+let {writeResponse, writeError} = require("../helpers/Response")
 
 const courseRegister = async (req, res) => {
     let {email, coursename} = req.body
