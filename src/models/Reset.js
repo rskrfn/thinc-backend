@@ -16,26 +16,50 @@ let emailCheck = (email) => {
   });
 };
 
-let createOTP = (code, start, end) => {
+let createOTP = (email, code, validuntil) => {
   return new Promise((resolve, reject) => {
-    let createquery =
-      "INSERT INTO `otp`(`otp_code`, `start_time`, `end_time`) VALUES ( ?, ?, ?)";
-    db.query(createquery, code, start, end, function (err, result) {
+    let user_id;
+    let idlookup = "SELECT u.id FROM users u WHERE u.email = ?";
+    db.query(idlookup, email, function (err, result) {
       if (err) return reject(err);
-      console.log(result);
-      return resolve(true);
+      user_id = result[0].id;
+      // console.log(user_id);
+      let createquery =
+        "INSERT INTO `otp`( `user_id`, `otp_code`, `valid_until`) VALUES ( ?, ?, ?)";
+      db.query(
+        createquery,
+        [user_id, code, validuntil],
+        function (err) {
+          if (err) return reject(err);
+          // console.log(result);
+          return resolve(true);
+        }
+      );
     });
   });
 };
 
-let checkOTP = (code) => {
+let checkOTP = (email, code) => {
   return new Promise((resolve, reject) => {
-    let checkquery =
-      "SELECT o.otp_code, o.start_time, o.end_time FROM otp o WHERE o.otp_code = ?";
-    db.query(checkquery, code, function (err, result) {
+    let user_id;
+    let idlookup = "SELECT u.id FROM users u WHERE u.email = ?";
+    db.query(idlookup, email, function (err, result) {
       if (err) return reject(err);
-      console.log(result)
-      return resolve(true);
+      // console.log(result)
+      if (result.length === 0){
+        return reject("Email not found")
+      }
+      user_id = result[0].id;
+      // console.log(user_id);
+      let checkquery =
+        "SELECT o.otp_code, o.valid_until FROM otp o WHERE o.user_id = ? AND o.otp_code = ?";
+      db.query(checkquery, [user_id, code], function (err, result) {
+        if (err) return reject(err);
+        if (!result.length) return resolve(false);
+        if (result.length > 0) {
+          return resolve(result);
+        }
+      });
     });
   });
 };

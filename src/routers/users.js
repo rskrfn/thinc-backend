@@ -23,6 +23,6 @@ Router.post("/courseregister", authorize.memberOnly, courseRegister);
 //score
 Router.get("/score", getScore);
 
-Router.post("/otp", validateOTP)
+Router.post("/", validateOTP)
 
 module.exports = Router;
