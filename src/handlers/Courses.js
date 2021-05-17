@@ -25,7 +25,7 @@ const getAllCourses = async (req, res) => {
 const allCoursePagination = async (req, res) => {
   try {
     let { query, baseUrl, path, hostname, protocol } = req;
-    console.log(req.path)
+    console.log(req.query)
     let allcoursepagination = await getCoursesPagination(query);
     if (!allcoursepagination) {
       return writeResponse(res, false, 400, "No Data");

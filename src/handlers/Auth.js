@@ -13,11 +13,6 @@ let { writeResponse, writeError } = require("../helpers/Response");
 
 const userRegister = async (req, res) => {
   let { name, username, email, password } = req.body;
-  name = name.trim();
-  username = username.trim();
-  email = email.trim();
-  password = password.trim();
-  let splittedName = name.split(" ");
   let emailValidation = () => {
     let reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w\w+)+$/;
     if (reg.test(email) === false) {
@@ -39,6 +34,11 @@ const userRegister = async (req, res) => {
     if (!name || !username || !email || !password) {
       return writeError(res, 406, "An Empty Field");
     }
+    name = name.trim();
+    username = username.trim();
+    email = email.trim();
+    password = password.trim();
+    let splittedName = name.split(" ");
     if (!nameValidation()) {
       return writeError(res, 406, "Name can only contain alphabets");
     }
@@ -109,8 +109,6 @@ const userLogin = async (req, res) => {
     return writeError(res, err);
   }
 };
-
-
 
 module.exports = {
   userRegister,

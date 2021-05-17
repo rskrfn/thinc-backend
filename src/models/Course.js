@@ -67,7 +67,7 @@ let deletecourse = (coursename) => {
 let myClass = (userId) => {
   return new Promise((resolve, reject) => {
     let myclassquery =
-      "SELECT c.course_name AS 'Name', c.category AS 'Category', c.description AS 'Description' FROM courses c JOIN user_course uc ON c.id = uc.course_id WHERE uc.user_id = ?";
+      "SELECT c.course_name AS 'Name', cat.category AS 'Category', c.description AS 'Description' FROM courses c JOIN user_course uc ON c.id = uc.course_id JOIN course_category cat ON cat.id = c.id_category WHERE uc.user_id = ?";
     db.query(myclassquery, [userId], function (err, result) {
       if (err) return reject(err);
       if (result.length === 0) {
@@ -81,7 +81,7 @@ let myClass = (userId) => {
 let newClass = (userId) => {
   return new Promise((resolve, reject) => {
     let newclassquery =
-      "SELECT c.course_name AS 'Name', c.category AS 'Category', c.description AS 'Description', c.course_level AS 'Level', c.price AS 'Price' FROM courses c WHERE c.id NOT IN (SELECT user_course.course_id FROM user_course WHERE user_course.user_id = ?)";
+      "SELECT c.course_name AS 'Name', cat.category AS 'Category', c.description AS 'Description', c.course_level AS 'Level', c.price AS 'Price' FROM courses c JOIN course_category cat ON cat.id = c.id_category WHERE c.id NOT IN (SELECT user_course.course_id FROM user_course WHERE user_course.user_id = ?)";
     db.query(newclassquery, [userId], function (err, result) {
       if (err) return reject(err);
       if (result.length === 0) {
@@ -132,11 +132,12 @@ let getCourses = () => {
 
 let getCoursesPagination = (query) => {
   return new Promise((resolve, reject) => {
+    const userid = query.userid
     const mainquery =
-      "SELECT c.course_name, c.category, c.description, cl.level_name AS 'level', c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level";
+      "SELECT c.course_name, cat.category, c.description, cl.level_name AS 'level', c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category ";
     const secondaryquery = " LIMIT ? OFFSET ?";
     const paginatedquery = mainquery.concat(" ", secondaryquery);
-    const limit = Number(query.limit) || 5;
+    const limit = Number(query.limit) || 10;
     const page = Number(query.page) || 1;
     const offset = (page - 1) * limit;
     db.query(paginatedquery, [limit, offset], (err, result) => {
