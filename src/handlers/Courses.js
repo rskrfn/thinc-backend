@@ -9,7 +9,21 @@ let {
   getUserId,
   myClass,
   newClass,
+  registerCourse,
 } = require("../models/Course");
+
+const userRegisterCourse = async (req, res) => {
+  try {
+    let { userid, courseid } = req.body;
+    let courseRegister = await registerCourse(userid, courseid);
+    if (courseRegister === false) {
+      return writeError(res, 400, "User is Enrolled");
+    }
+    return writeResponse(res, true, 200, courseRegister);
+  } catch (err) {
+    return writeError(res, 500, "Server Error");
+  }
+};
 
 const getAllCourses = async (req, res) => {
   try {
@@ -25,7 +39,7 @@ const getAllCourses = async (req, res) => {
 const allCoursePagination = async (req, res) => {
   try {
     let { query, baseUrl, path, hostname, protocol } = req;
-    console.log(req.query)
+    console.log(req.query);
     let allcoursepagination = await getCoursesPagination(query);
     if (!allcoursepagination) {
       return writeResponse(res, false, 400, "No Data");
@@ -133,9 +147,10 @@ const coursesSort = async (req, res) => {
 
 module.exports = {
   getAllCourses,
-  allCoursePagination,
+  allCoursePagination, 
   getMyClass,
   getNewClass,
   coursesSort,
   searchCoursebyName,
+  userRegisterCourse,
 };

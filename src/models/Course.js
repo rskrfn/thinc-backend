@@ -92,17 +92,6 @@ let newClass = (userId) => {
   });
 };
 
-let registerCourse = (userId, courseId) => {
-  return new Promise((resolve, reject) => {
-    let registerquery =
-      "INSERT INTO `user_course`(`user_id`, `course_id`) VALUES (?, ?)";
-    db.query(registerquery, [userId, courseId], function (err, result) {
-      if (err) return reject(err);
-      return resolve(result);
-    });
-  });
-};
-
 let courseSearch = (coursename) => {
   return new Promise((resolve, reject) => {
     let searchquery = "SELECT c.id FROM courses c WHERE c.course_name = ?";
@@ -132,7 +121,7 @@ let getCourses = () => {
 
 let getCoursesPagination = (query) => {
   return new Promise((resolve, reject) => {
-    const userid = query.userid
+    const userid = query.userid;
     const mainquery =
       "SELECT c.course_name, cat.category, c.description, cl.level_name AS 'level', c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category ";
     const secondaryquery = " LIMIT ? OFFSET ?";
@@ -182,6 +171,90 @@ let searchCourse = (searchValue) => {
         return reject(false);
       }
       return resolve(result);
+    });
+  });
+};
+
+let registerCourse = (userid, courseid) => {
+  return new Promise((resolve, reject) => {
+    const isEnrolled =
+      "SELECT `user_id`, `course_id` FROM `user_course` WHERE user_id = ? AND course_id = ?";
+    db.query(isEnrolled, [userid, courseid], (errenroll, resultenrolled) => {
+      if (errenroll) {
+        return reject(errenroll);
+      }
+      if (resultenrolled.length > 0) {
+        return resolve(false);
+      }
+      db.beginTransaction((err) => {
+        let idSubCourses = [];
+        let idUserCourse = "";
+        if (err) return reject(err);
+        const insertUserCourse =
+          "INSERT INTO `user_course`(`user_id`, `course_id`) VALUES (?, ?)";
+        db.query(insertUserCourse, [userid, courseid], (errIUC, resultIUC) => {
+          if (errIUC) {
+            return db.rollback(() => {
+              return reject(errIUC);
+            });
+          }
+          // console.log(resultIUC);
+          const getIdUserCourse =
+            "SELECT id FROM user_course WHERE user_id = ? AND course_id = ?";
+          db.query(getIdUserCourse, [userid, courseid], (errGIUC, resultGIUC) => {
+            if (errGIUC) {
+              return db.rollback(() => {
+                return reject(errGIUC);
+              });
+            }
+            if (resultGIUC.length > 0) {
+              idUserCourse = resultGIUC;
+            }
+            const getSubCourses =
+              "SELECT sc.id FROM subcourses sc WHERE sc.course_id = ?";
+            db.query(getSubCourses, courseid, (errGSC, resultGSC) => {
+              if (errGSC) {
+                return db.rollback(() => {
+                  return reject(errGSC);
+                });
+              }
+              if (!resultGSC) {
+                return db.rollback(() => {
+                  return reject(errGSC);
+                });
+              }
+              if (resultGSC.length > 0) {
+                idSubCourses = resultGSC;
+                // console.log(idSubCourses);
+              }
+              const insertScore =
+                "INSERT INTO `score`(`id_user_course`, `id_subcourses`) VALUES (?, ?)";
+              for (let i = 0; i < idSubCourses.length; i++) {
+                db.query(
+                  insertScore,
+                  [idUserCourse[0].id, idSubCourses[i].id],
+                  (errIS, resultIS) => {
+                    if (errIS) {
+                      return db.rollback(() => {
+                        return reject(errIS);
+                      });
+                    }
+                    return;
+                  }
+                );
+              }
+              db.commit((errcommit) => {
+                if (errcommit) {
+                  return db.rollback(() => {
+                    return reject(errcommit);
+                  });
+                }
+                return resolve(true);
+              });
+            });
+          });
+        });
+      });
     });
   });
 };
