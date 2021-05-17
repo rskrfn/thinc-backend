@@ -121,7 +121,7 @@ let getCourses = () => {
 
 let getCoursesPagination = (query) => {
   return new Promise((resolve, reject) => {
-    const userid = query.userid;
+    // const userid = query.userid;
     const mainquery =
       "SELECT c.course_name, cat.category, c.description, cl.level_name AS 'level', c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category ";
     const secondaryquery = " LIMIT ? OFFSET ?";
@@ -192,6 +192,7 @@ let registerCourse = (userid, courseid) => {
         if (err) return reject(err);
         const insertUserCourse =
           "INSERT INTO `user_course`(`user_id`, `course_id`) VALUES (?, ?)";
+        // eslint-disable-next-line no-unused-vars
         db.query(insertUserCourse, [userid, courseid], (errIUC, resultIUC) => {
           if (errIUC) {
             return db.rollback(() => {
@@ -233,6 +234,7 @@ let registerCourse = (userid, courseid) => {
                 db.query(
                   insertScore,
                   [idUserCourse[0].id, idSubCourses[i].id],
+                  // eslint-disable-next-line no-unused-vars
                   (errIS, resultIS) => {
                     if (errIS) {
                       return db.rollback(() => {
