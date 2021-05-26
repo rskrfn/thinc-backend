@@ -1,16 +1,29 @@
 /* eslint-disable no-undef */
 let mysql = require("mysql");
-let { writeError, writeResponse } = require("../helpers/Header");
+let { writeError, writeResponse } = require("../helpers/Response");
 let {
   getCourses,
   getCoursesPagination,
   courseSort,
   searchCourse,
-  getUserId,
   myClass,
   newClass,
+  registerCourse,
+  getSubCoursesObjective,
 } = require("../models/Course");
 
+const userRegisterCourse = async (req, res) => {
+  try {
+    let { userid, courseid } = req.body;
+    let courseRegister = await registerCourse(userid, courseid);
+    if (courseRegister === false) {
+      return writeError(res, 400, "User is Enrolled");
+    }
+    return writeResponse(res, true, 200, courseRegister);
+  } catch (err) {
+    return writeError(res, 500, "Server Error");
+  }
+};
 
 const getAllCourses = async (req, res) => {
   try {
@@ -26,6 +39,7 @@ const getAllCourses = async (req, res) => {
 const allCoursePagination = async (req, res) => {
   try {
     let { query, baseUrl, path, hostname, protocol } = req;
+    console.log(req.query);
     let allcoursepagination = await getCoursesPagination(query);
     if (!allcoursepagination) {
       return writeResponse(res, false, 400, "No Data");
@@ -40,8 +54,9 @@ const allCoursePagination = async (req, res) => {
       page === totalPage
         ? null
         : url + `?page=${page + 1}&limit=${query.limit || 5}`;
-    const info = { count, page, totalPage, next, prev, result };
-    return writeResponse(res, true, 200, "Data Received", info);
+    const info = { count, page, totalPage, next, prev };
+    const display = { info, result };
+    return writeResponse(res, true, 200, "Data Received", display);
   } catch (err) {
     return writeResponse(res, false, 500, err);
   }
@@ -63,19 +78,12 @@ const searchCoursebyName = async (req, res) => {
 };
 
 const getMyClass = async (req, res) => {
-  let { email } = req.body;
+  let userId = req.query.id;
   try {
-    if (!email) {
-      return writeResponse(res, false, 400, "Enter User Email");
+    if (!userId) {
+      return writeResponse(res, false, 401, "Missing userId params");
     }
-    let UserId = await getUserId(email);
-    if (!UserId) {
-      return writeResponse(res, true, 200, "This user hasn't registered in any class")
-    }
-    if (UserId === false) {
-      return writeResponse(res, false, 400, "Email Not Found");
-    }
-    let MyClass = await myClass(UserId[0].id);
+    let MyClass = await myClass(userId);
     return writeResponse(res, true, 200, "Data Recieved", MyClass);
   } catch (err) {
     return console.log(err);
@@ -83,18 +91,28 @@ const getMyClass = async (req, res) => {
 };
 
 const getNewClass = async (req, res) => {
-  let { email } = req.body;
+  const userId = req.query.id;
+  console.log(req);
   try {
-    if (!email) {
-      return writeResponse(res, false, 400, "Enter User Email");
+    if (!userId) {
+      return writeResponse(res, false, 400, "Missing userId params");
     }
-    let UserId = await getUserId(email);
-    console.log(UserId);
-    if (UserId === false) {
-      return writeResponse(res, false, 400, "Email Not Found");
-    }
-    let NewClass = await newClass(UserId[0].id);
+    let NewClass = await newClass(userId);
     return writeResponse(res, true, 200, "Data Recieved", NewClass);
+  } catch (err) {
+    return writeError(res, err);
+  }
+};
+
+const getObjective = async (req, res) => {
+  let courseId = req.query.courseid;
+  console.log(req.query);
+  try {
+    if (!courseId) {
+      return writeError(res, 400, "Missing courseid params");
+    }
+    let objectives = await getSubCoursesObjective(courseId);
+    return writeResponse(res, true, 200, "Data Found", objectives);
   } catch (err) {
     return writeError(res, err);
   }
@@ -130,6 +148,8 @@ module.exports = {
   allCoursePagination,
   getMyClass,
   getNewClass,
+  getObjective,
   coursesSort,
   searchCoursebyName,
+  userRegisterCourse,
 };

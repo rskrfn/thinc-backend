@@ -1,5 +1,5 @@
 let { usernameCheck, emailCheck, registerUser } = require("../models/Auth");
-let { writeResponse, writeError } = require("../helpers/Header");
+let { writeResponse, writeError } = require("../helpers/Response");
 
 const register = async (req, res) => {
   let { name, username, email, password } = req.body;

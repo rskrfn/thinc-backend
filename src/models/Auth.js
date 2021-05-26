@@ -23,7 +23,7 @@ let emailCheck = (email) => {
     db.query(emailquery, email, function (err, result) {
       if (err) return reject(err);
       if (result.length > 0) {
-        return resolve(result);
+        return resolve(true);
       }
       return resolve(false);
     });
@@ -51,7 +51,7 @@ let registerUser = (name, username, email, password) => {
 let loginUser = (usernameemail, password) => {
   return new Promise((resolve, reject) => {
     let dbquery =
-      "SELECT u.name , u.username, u.password, ul.level_name AS 'role' FROM users u JOIN user_level ul on u.user_level = ul.level_id WHERE (u.username = ? or u.email = ?)";
+      "SELECT u.id, u.email, u.name , u.username, u.password, u.phone, ul.level_name AS 'role' FROM users u JOIN user_level ul on u.user_level = ul.level_id WHERE (u.username = ? or u.email = ?)";
     db.query(dbquery, [usernameemail, usernameemail], function (err, result) {
       if (err) {
         return reject(err);
@@ -62,37 +62,28 @@ let loginUser = (usernameemail, password) => {
       // return resolve(result)
       bcrypt.compare(password, result[0].password, (err, isPassMatch) => {
         if (err) reject(err);
-        if (!isPassMatch) {
-          console.log(isPassMatch);
+        if (isPassMatch === false) {
           return resolve((result = false));
         }
-      });
-      let { username, role } = result[0];
-      let payload = {
-        username,
-        role,
-      };
-      let options = {
-        expiresIn: process.env.EXPIRE,
-        issuer: process.env.ISSUER,
-      };
-      jwt.sign(payload, process.env.SECRET_KEY, options, (err, token) => {
-        if (err) return reject(err);
-        console.log(process.env.EXPIRE);
-        resolve(token);
-      });
-    });
-  });
-};
-
-let passwordChange = (newpassword, email) => {
-  return new Promise((resolve, reject) => {
-    const qs = "UPDATE `users` SET `password`= ? WHERE `email` = ?";
-    bcrypt.hash(newpassword, 10, (err, hashedPass) => {
-      if (err) return reject(err);
-      db.query(qs, [hashedPass, email], function (err, result) {
-        if (err) return reject(err);
-        return resolve(result);
+        if (isPassMatch === true) {
+          let { id, email, name, username, role } = result[0];
+          let payload = {
+            id,
+            name,
+            email,
+            username,
+            role,
+          };
+          console.log(payload);
+          let options = {
+            expiresIn: process.env.EXPIRE,
+            issuer: process.env.ISSUER,
+          };
+          jwt.sign(payload, process.env.SECRET_KEY, options, (err, token) => {
+            if (err) return reject(err);
+            resolve({ data: payload, token: token });
+          });
+        }
       });
     });
   });
@@ -103,5 +94,4 @@ module.exports = {
   emailCheck,
   registerUser,
   loginUser,
-  passwordChange,
 };

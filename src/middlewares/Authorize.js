@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const jwt = require("jsonwebtoken");
-const { writeResponse, writeError } = require("../helpers/Header");
+const { writeResponse, writeError } = require("../helpers/Response");
 
 const memberOnly = (req, res, next) => {
   let token = req.header("x-access-token");

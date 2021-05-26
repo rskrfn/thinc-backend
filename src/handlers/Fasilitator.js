@@ -1,5 +1,5 @@
 let {getUserLevel, addcourse, deletecourse, searchcourse} = require("../models/Course")
-let {writeResponse, writeError} = require("../helpers/Header")
+let {writeResponse, writeError} = require("../helpers/Response")
 
 const createCourse = async (req, res) => {
     let {email, coursename, category, description, level, price} = req.body

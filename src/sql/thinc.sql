@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 13, 2021 at 06:00 AM
+-- Generation Time: May 26, 2021 at 05:30 AM
 -- Server version: 10.4.18-MariaDB
 -- PHP Version: 7.3.27
 
@@ -29,36 +29,66 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `courses` (
   `id` int(11) NOT NULL,
+  `id_facilitator` int(11) NOT NULL,
   `course_name` varchar(255) NOT NULL,
-  `category` varchar(255) NOT NULL,
-  `description` mediumtext NOT NULL,
+  `id_category` int(11) NOT NULL,
+  `description` text NOT NULL,
+  `objective` text NOT NULL,
   `course_level` int(11) NOT NULL,
-  `price` int(11) NOT NULL
+  `price` int(11) NOT NULL,
+  `schedule` date NOT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `backdrop` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `courses`
 --
 
-INSERT INTO `courses` (`id`, `course_name`, `category`, `description`, `course_level`, `price`) VALUES
-(300, 'Front-end fundamentals', 'Software', 'Learn the fundamentals of front end...', 1, 0),
-(301, 'HTML for Beginners', 'Software', 'HTML from scratch', 1, 0),
-(302, 'History of Europe', 'History', 'The history of Europe concerns itself...', 1, 0),
-(303, 'Know more Javascript', 'Software', 'Javascript from the basic for beginner. JavaScript is a programming language that adds interactivity to your website. This happens in games, in the behavior of responses when buttons are pressed or with data entry on forms; with dynamic styling; with animation, etc. This class helps you get started with JavaScript and furthers your understanding of what is possible.', 1, 0),
-(304, 'HTML and CSS to code', 'Software', 'Start combining HTML and CSS to...', 2, 10),
-(305, 'Business and Financial Modeling', 'Software', 'Designed to help you make...', 1, 0),
-(306, 'Marketing in a Digital World', 'Software', 'This class examines how digital...', 2, 10),
-(307, 'Indonesian war history', 'History', 'From the first colonialization until...', 3, 50),
-(308, 'Ancient Egypt and Its Civilization', 'History', 'Colossal pyramids, imposing temples...', 2, 10),
-(309, 'Buddhism and Modern Psychology', 'Psychology', 'Buddhism and science are deeply...', 1, 0),
-(310, 'Social Psychology', 'Psychology', 'This class offers some answers...', 3, 50),
-(311, 'Financial markets', 'Finance', 'An overview of the ideas, methods...', 2, 10),
-(312, 'Corporate finance', 'Finance', 'Introduction to the fundamentals...', 3, 50),
-(313, 'Banking Finance', 'Finance', 'Explore the dynamic, fast-paced...', 3, 50),
-(314, 'Algorithm specialization', 'Math', 'Learn to think like a computer...', 3, 50),
-(315, 'Trigonometry', 'Math', 'Trigonometry helps us find angles...', 3, 50),
-(316, 'Algebra', 'Math', 'Branch of mathematics dealing with...', 2, 10),
-(319, 'Molecular Biology', 'Science', 'Study the coposition, structure..', 2, 10);
+INSERT INTO `courses` (`id`, `id_facilitator`, `course_name`, `id_category`, `description`, `objective`, `course_level`, `price`, `schedule`, `start_time`, `end_time`, `backdrop`) VALUES
+(300, 0, 'Front-end fundamentals', 1, 'Front end development manages everything that users visually see first in their browser or application. Front end developers are responsible for the look and feel of a site. Front end development is mostly focused on what some may coin the \"client side\" of development.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit blandit risus, tempor ullamcorper metus sit accumsan. Dictum sit tincidunt turpis malesuada arcu amet cursus blandit. Sociis diam elit imperdiet eget posuere id sagittis. ', 1, 0, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(301, 0, 'HTML for Beginners', 1, 'HTML from scratch', '', 1, 0, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(302, 0, 'History of Europe', 2, 'The history of Europe concerns itself...', '', 1, 0, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(303, 0, 'Know more Javascript', 1, 'Javascript from the basic for beginner. JavaScript is a...', '', 1, 0, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(304, 0, 'HTML and CSS to code', 1, 'Start combining HTML and CSS to...', '', 2, 10, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(305, 0, 'Business and Financial Modeling', 4, 'Designed to help you make...', '', 1, 0, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(306, 0, 'Marketing in a Digital World', 4, 'This class examines how digital...', '', 2, 10, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(307, 0, 'Indonesian war history', 2, 'From the first colonialization until...', '', 3, 50, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(308, 0, 'Ancient Egypt and Its Civilization', 2, 'Colossal pyramids, imposing temples...', '', 2, 10, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(309, 0, 'Buddhism and Modern Psychology', 2, 'Buddhism and science are deeply...', '', 1, 0, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(310, 0, 'Social Psychology', 2, 'This class offers some answers...', '', 3, 50, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(311, 0, 'Financial markets', 4, 'An overview of the ideas, methods...', '', 2, 10, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(312, 0, 'Corporate finance', 4, 'Introduction to the fundamentals...', '', 3, 50, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(313, 0, 'Banking Finance', 4, 'Explore the dynamic, fast-paced...', '', 3, 50, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(314, 0, 'Algorithm specialization', 1, 'Learn to think like a computer...', '', 3, 50, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(315, 0, 'Trigonometry', 5, 'Trigonometry helps us find angles...', '', 3, 50, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(316, 0, 'Algebra', 5, 'Branch of mathematics dealing with...', '', 2, 10, '0000-00-00', '00:00:00', '00:00:00', NULL),
+(319, 0, 'Molecular Biology', 6, 'Study the coposition, structure..', '', 2, 10, '0000-00-00', '00:00:00', '00:00:00', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `course_category`
+--
+
+CREATE TABLE `course_category` (
+  `id` int(11) NOT NULL,
+  `category` varchar(255) NOT NULL,
+  `thumbnail` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `course_category`
+--
+
+INSERT INTO `course_category` (`id`, `category`, `thumbnail`) VALUES
+(1, 'Software', NULL),
+(2, 'History', NULL),
+(3, 'Psychology', NULL),
+(4, 'Finance', NULL),
+(5, 'Math', NULL),
+(6, 'Science', NULL);
 
 -- --------------------------------------------------------
 
@@ -97,14 +127,53 @@ CREATE TABLE `messages` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `otp`
+--
+
+CREATE TABLE `otp` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `otp_code` int(11) NOT NULL,
+  `valid_until` varchar(255) NOT NULL,
+  `timestamp` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `otp`
+--
+
+INSERT INTO `otp` (`id`, `user_id`, `otp_code`, `valid_until`, `timestamp`) VALUES
+(8, 139, 8238, '2021-05-13T15:22:42Z', '2021-05-13 19:22:42'),
+(9, 139, 8900, '2021-05-13T21:30:39Z', '2021-05-14 01:30:39'),
+(10, 140, 25, '2021-05-13T21:34:01Z', '2021-05-14 01:34:01'),
+(11, 140, 8705, '2021-05-13T21:35:21Z', '2021-05-14 01:35:21'),
+(12, 140, 5296, '2021-05-13T21:36:26Z', '2021-05-14 01:36:26'),
+(13, 140, 6271, '2021-05-13T22:00:22Z', '2021-05-14 02:00:22'),
+(14, 140, 2369, '2021-05-13T22:01:51Z', '2021-05-14 02:01:51'),
+(15, 140, 8216, '2021-05-13T22:05:20Z', '2021-05-14 02:05:20'),
+(16, 139, 1770, '2021-05-22T17:32:14Z', '2021-05-22 21:32:14'),
+(17, 140, 853, '2021-05-22T17:54:55Z', '2021-05-22 21:54:55'),
+(18, 140, 6460, '2021-05-22T17:57:35Z', '2021-05-22 21:57:35'),
+(19, 140, 4770, '2021-05-22T18:06:38Z', '2021-05-22 22:06:38'),
+(20, 140, 7886, '2021-05-22T18:09:11Z', '2021-05-22 22:09:11'),
+(21, 140, 2848, '2021-05-23T06:47:00Z', '2021-05-23 10:47:00'),
+(22, 140, 8750, '2021-05-23T06:55:36Z', '2021-05-23 10:55:36'),
+(23, 140, 9622, '2021-05-23T06:56:13Z', '2021-05-23 10:56:13'),
+(24, 140, 874, '2021-05-23T07:18:49Z', '2021-05-23 11:18:49'),
+(25, 140, 256, '2021-05-23T07:20:50Z', '2021-05-23 11:20:50'),
+(26, 140, 563, '2021-05-23T07:36:23Z', '2021-05-23 11:36:23'),
+(27, 140, 2640, '2021-05-23T07:59:23Z', '2021-05-23 11:59:23');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `score`
 --
 
 CREATE TABLE `score` (
   `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `course_id` int(11) NOT NULL,
-  `subcourse_id` int(11) NOT NULL,
+  `id_user_course` int(11) NOT NULL,
+  `id_subcourses` int(11) NOT NULL,
   `score` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -112,17 +181,25 @@ CREATE TABLE `score` (
 -- Dumping data for table `score`
 --
 
-INSERT INTO `score` (`id`, `user_id`, `course_id`, `subcourse_id`, `score`) VALUES
-(1, 102, 300, 500, 100),
-(2, 102, 300, 501, 42),
-(3, 102, 300, 502, 21),
-(4, 102, 300, 503, 98),
-(5, 102, 300, 504, 86),
-(6, 102, 300, 505, 72),
-(7, 102, 300, 506, NULL),
-(8, 102, 300, 507, NULL),
-(9, 102, 300, 508, NULL),
-(10, 102, 300, 509, NULL);
+INSERT INTO `score` (`id`, `id_user_course`, `id_subcourses`, `score`) VALUES
+(1, 7, 500, NULL),
+(2, 7, 501, NULL),
+(3, 7, 502, NULL),
+(4, 7, 503, NULL),
+(5, 7, 504, NULL),
+(6, 7, 505, NULL),
+(7, 7, 506, NULL),
+(8, 7, 507, NULL),
+(9, 7, 508, NULL),
+(10, 7, 509, NULL),
+(11, 8, 510, NULL),
+(12, 8, 511, NULL),
+(13, 8, 512, NULL),
+(14, 8, 513, NULL),
+(15, 9, 510, NULL),
+(16, 9, 511, NULL),
+(17, 9, 512, NULL),
+(18, 9, 513, NULL);
 
 -- --------------------------------------------------------
 
@@ -134,25 +211,40 @@ CREATE TABLE `subcourses` (
   `id` int(11) NOT NULL,
   `course_id` int(11) NOT NULL,
   `subcourse_name` varchar(255) NOT NULL,
-  `schedule` datetime DEFAULT NULL,
-  `duration` int(11) DEFAULT NULL
+  `objective` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `subcourses`
 --
 
-INSERT INTO `subcourses` (`id`, `course_id`, `subcourse_name`, `schedule`, `duration`) VALUES
-(500, 300, 'HTML Essential Training', NULL, NULL),
-(501, 300, 'CSS Essential Training', NULL, NULL),
-(502, 300, 'Javascript Essential Training', NULL, NULL),
-(503, 300, 'Responsive Layout', NULL, NULL),
-(504, 300, 'Mid-term Exam', NULL, NULL),
-(505, 300, 'Bootstrap4 Essential Training', NULL, NULL),
-(506, 300, 'Sass Essential Training', NULL, NULL),
-(507, 300, 'Learning React.js', NULL, NULL),
-(508, 300, 'UX for Web Design', NULL, NULL),
-(509, 300, 'Final-term Exam', NULL, NULL);
+INSERT INTO `subcourses` (`id`, `course_id`, `subcourse_name`, `objective`) VALUES
+(500, 300, 'HTML Essential Training', 'Learning HTML'),
+(501, 300, 'CSS Essential Training', 'Learning CSS'),
+(502, 300, 'Javascript Essential Training', 'Learning JavaScript'),
+(503, 300, 'Responsive Layout', 'Learning about responsive layout'),
+(504, 300, 'Mid-term Exam', 'Mid-term exam to measure your knowledge'),
+(505, 300, 'Bootstrap4 Essential Training', 'Learning how to use Bootstrap'),
+(506, 300, 'Sass Essential Training', 'Learning Sass'),
+(507, 300, 'Learning React.js', 'Learning React.js'),
+(508, 300, 'UX for Web Design', 'Learning UX'),
+(509, 300, 'Final-term Exam', 'Final-term exam to measure your knowledge'),
+(510, 301, 'Subcourse 1', NULL),
+(511, 301, 'Subcourse 2', NULL),
+(512, 301, 'Subcourse 3', NULL),
+(513, 301, 'Subcourse 4', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `token_blacklist`
+--
+
+CREATE TABLE `token_blacklist` (
+  `id` int(11) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expire` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -166,9 +258,9 @@ CREATE TABLE `users` (
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `phone` varchar(255) NOT NULL,
+  `phone` varchar(255) DEFAULT NULL,
   `display_picture` varchar(255) DEFAULT NULL,
-  `user_level` int(1) NOT NULL DEFAULT 1
+  `user_level` int(1) NOT NULL DEFAULT 2
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -177,9 +269,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `username`, `email`, `password`, `phone`, `display_picture`, `user_level`) VALUES
 (101, 'Emir Kharisma', 'kharismaemir', 'emirkharisma@arkademy.com', '$2b$10$ftRrWHWxtt56NL98xZNsSeFumLsJN.zDS6moY/ELDJY7Go2Df7H0m', '0', '', 2),
-(102, 'Arka', 'arkademy', 'arka@arkademy.com', '$2b$10$wwgMMVuR.XmEsJRXlf5Nu.xOZtPked5TOGpLTDSf6lWPxnlFGUM4q', '0', '', 1),
-(103, 'Mylo', 'longboi', 'mylo@catsmafia.com', '$2b$10$wbSr7jJ4TUNSTa5yzLce3OE6YYSToFBIeHfXZ6dKBsR1gSxgjgM1y', '0', '', 2),
-(104, 'Dummy Account', 'dummy', 'dummy@example.com', '$2b$10$L/9HYrlADF0oFw8Yy/o2s.wQMg7jfaQqiM/iJTi6cFilOmKnXM1pC', '088833332222', '/images/1618286070665_image.jpg', 2);
+(139, 'Muhammad Ilham', 'member', 'Ilham@example.com', '$2b$10$iVdLFeGZxsVicZcyjXuetOTvgjholfxTRYAmQCsRTBIQJOQycqrUu', '6287870720737', NULL, 2),
+(140, 'Elenna Liandra', 'Elenn', 'alzamafero@gmail.com', '$2b$10$IvxAJh0tm5HbsjG7VNerM.GIsfgI4ITccw1Z9h/EhakYYIwUSDQ0.', '6288877776665', NULL, 2);
 
 -- --------------------------------------------------------
 
@@ -203,7 +294,10 @@ INSERT INTO `user_course` (`id`, `user_id`, `course_id`) VALUES
 (3, 101, 302),
 (4, 101, 315),
 (5, 101, 316),
-(6, 101, 313);
+(6, 101, 313),
+(7, 140, 300),
+(8, 140, 301),
+(9, 139, 301);
 
 -- --------------------------------------------------------
 
@@ -235,9 +329,21 @@ ALTER TABLE `courses`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `course_category`
+--
+ALTER TABLE `course_category`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `messages`
 --
 ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `otp`
+--
+ALTER TABLE `otp`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -250,6 +356,12 @@ ALTER TABLE `score`
 -- Indexes for table `subcourses`
 --
 ALTER TABLE `subcourses`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `token_blacklist`
+--
+ALTER TABLE `token_blacklist`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -272,7 +384,13 @@ ALTER TABLE `user_course`
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=323;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=324;
+
+--
+-- AUTO_INCREMENT for table `course_category`
+--
+ALTER TABLE `course_category`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `messages`
@@ -281,22 +399,34 @@ ALTER TABLE `messages`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `otp`
+--
+ALTER TABLE `otp`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+--
 -- AUTO_INCREMENT for table `score`
 --
 ALTER TABLE `score`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `subcourses`
 --
 ALTER TABLE `subcourses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=510;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=514;
+
+--
+-- AUTO_INCREMENT for table `token_blacklist`
+--
+ALTER TABLE `token_blacklist`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=105;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=148;
 
 --
 -- AUTO_INCREMENT for table `user_course`

@@ -67,7 +67,7 @@ let deletecourse = (coursename) => {
 let myClass = (userId) => {
   return new Promise((resolve, reject) => {
     let myclassquery =
-      "SELECT c.course_name AS 'Name', c.category AS 'Category', c.description AS 'Description' FROM courses c JOIN user_course uc ON c.id = uc.course_id WHERE uc.user_id = ?";
+      "SELECT c.id AS 'id', c.course_name AS 'Name', cat.category AS 'Category', c.description AS 'Description', cl.level_name AS 'Level', c.price AS 'Price' FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN user_course uc ON c.id = uc.course_id JOIN course_category cat ON cat.id = c.id_category WHERE uc.user_id = ?";
     db.query(myclassquery, [userId], function (err, result) {
       if (err) return reject(err);
       if (result.length === 0) {
@@ -81,7 +81,7 @@ let myClass = (userId) => {
 let newClass = (userId) => {
   return new Promise((resolve, reject) => {
     let newclassquery =
-      "SELECT c.course_name AS 'Name', c.category AS 'Category', c.description AS 'Description', c.course_level AS 'Level', c.price AS 'Price' FROM courses c WHERE c.id NOT IN (SELECT user_course.course_id FROM user_course WHERE user_course.user_id = ?)";
+      "SELECT c.id AS 'id', c.course_name AS 'Name', cat.category AS 'Category', c.description AS 'Description', cl.level_name AS 'Level', c.price AS 'Price' FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category WHERE c.id NOT IN (SELECT user_course.course_id FROM user_course WHERE user_course.user_id = ?)";
     db.query(newclassquery, [userId], function (err, result) {
       if (err) return reject(err);
       if (result.length === 0) {
@@ -92,12 +92,15 @@ let newClass = (userId) => {
   });
 };
 
-let registerCourse = (userId, courseId) => {
+let getSubCoursesObjective = (courseId) => {
   return new Promise((resolve, reject) => {
-    let registerquery =
-      "INSERT INTO `user_course`(`user_id`, `course_id`) VALUES (?, ?)";
-    db.query(registerquery, [userId, courseId], function (err, result) {
+    let objectivequery =
+      "SELECT GROUP_CONCAT(sc.objective SEPARATOR ',') AS 'Objective' FROM subcourses sc WHERE sc.course_id = ?";
+    db.query(objectivequery, [courseId], function (err, result) {
       if (err) return reject(err);
+      if (result.length === 0) {
+        return resolve(false);
+      }
       return resolve(result);
     });
   });
@@ -132,11 +135,12 @@ let getCourses = () => {
 
 let getCoursesPagination = (query) => {
   return new Promise((resolve, reject) => {
+    // const userid = query.userid;
     const mainquery =
-      "SELECT c.course_name, c.category, c.description, cl.level_name AS 'level', c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level";
+      "SELECT c.course_name, cat.category, c.description, cl.level_name AS 'level', c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category ";
     const secondaryquery = " LIMIT ? OFFSET ?";
     const paginatedquery = mainquery.concat(" ", secondaryquery);
-    const limit = Number(query.limit) || 5;
+    const limit = Number(query.limit) || 10;
     const page = Number(query.page) || 1;
     const offset = (page - 1) * limit;
     db.query(paginatedquery, [limit, offset], (err, result) => {
@@ -184,6 +188,96 @@ let searchCourse = (searchValue) => {
     });
   });
 };
+
+let registerCourse = (userid, courseid) => {
+  return new Promise((resolve, reject) => {
+    const isEnrolled =
+      "SELECT `user_id`, `course_id` FROM `user_course` WHERE user_id = ? AND course_id = ?";
+    db.query(isEnrolled, [userid, courseid], (errenroll, resultenrolled) => {
+      if (errenroll) {
+        return reject(errenroll);
+      }
+      if (resultenrolled.length > 0) {
+        return resolve(false);
+      }
+      db.beginTransaction((err) => {
+        let idSubCourses = [];
+        let idUserCourse = "";
+        if (err) return reject(err);
+        const insertUserCourse =
+          "INSERT INTO `user_course`(`user_id`, `course_id`) VALUES (?, ?)";
+        // eslint-disable-next-line no-unused-vars
+        db.query(insertUserCourse, [userid, courseid], (errIUC, resultIUC) => {
+          if (errIUC) {
+            return db.rollback(() => {
+              return reject(errIUC);
+            });
+          }
+          // console.log(resultIUC);
+          const getIdUserCourse =
+            "SELECT id FROM user_course WHERE user_id = ? AND course_id = ?";
+          db.query(
+            getIdUserCourse,
+            [userid, courseid],
+            (errGIUC, resultGIUC) => {
+              if (errGIUC) {
+                return db.rollback(() => {
+                  return reject(errGIUC);
+                });
+              }
+              if (resultGIUC.length > 0) {
+                idUserCourse = resultGIUC;
+              }
+              const getSubCourses =
+                "SELECT sc.id FROM subcourses sc WHERE sc.course_id = ?";
+              db.query(getSubCourses, courseid, (errGSC, resultGSC) => {
+                if (errGSC) {
+                  return db.rollback(() => {
+                    return reject(errGSC);
+                  });
+                }
+                if (!resultGSC) {
+                  return db.rollback(() => {
+                    return reject(errGSC);
+                  });
+                }
+                if (resultGSC.length > 0) {
+                  idSubCourses = resultGSC;
+                  // console.log(idSubCourses);
+                }
+                const insertScore =
+                  "INSERT INTO `score`(`id_user_course`, `id_subcourses`) VALUES (?, ?)";
+                for (let i = 0; i < idSubCourses.length; i++) {
+                  db.query(
+                    insertScore,
+                    [idUserCourse[0].id, idSubCourses[i].id],
+                    // eslint-disable-next-line no-unused-vars
+                    (errIS, resultIS) => {
+                      if (errIS) {
+                        return db.rollback(() => {
+                          return reject(errIS);
+                        });
+                      }
+                      return;
+                    }
+                  );
+                }
+                db.commit((errcommit) => {
+                  if (errcommit) {
+                    return db.rollback(() => {
+                      return reject(errcommit);
+                    });
+                  }
+                  return resolve(true);
+                });
+              });
+            }
+          );
+        });
+      });
+    });
+  });
+};
 module.exports = {
   getUserId,
   getUserLevel,
@@ -192,6 +286,7 @@ module.exports = {
   searchcourse,
   myClass,
   newClass,
+  getSubCoursesObjective,
   registerCourse,
   courseSearch,
   getCourses,
