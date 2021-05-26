@@ -33,8 +33,7 @@ const emailLookup = async (req, res) => {
 };
 
 const sendEmail = async (req, res) => {
-  const random = Math.random();
-  const code = Math.round(random * 10000);
+  const code = Math.floor(1000 + Math.random() * 9000);
   let expire = dayjs.utc().add(3, "hour").format();
 
   let { email } = req.body;
@@ -121,7 +120,7 @@ const passwordUpdate = async (req, res) => {
 const validateOTP = async (req, res) => {
   let now = dayjs.utc().format();
   let { query } = req;
-  console.log(query)
+  console.log(query);
   let isValid = (end_time) => {
     let expire = end_time;
     let nowdate = now.slice(0, 10).split("-").join("");
@@ -147,13 +146,13 @@ const validateOTP = async (req, res) => {
     if (!query) {
       return writeError(res, 400, "An empty field");
     }
-    if(!query.email){
-      return writeError(res, 404, "Email empty")
+    if (!query.email) {
+      return writeError(res, 404, "Email empty");
     }
-    if(!query.otp){
-      return writeError(res, 404, "OTP empty")
+    if (!query.otp) {
+      return writeError(res, 404, "OTP empty");
     }
-    let otpstatus = await checkOTP(query.email,query.otp);
+    let otpstatus = await checkOTP(query.email, query.otp);
     if (!otpstatus) {
       return writeError(res, 404, "Wrong otp code");
     }

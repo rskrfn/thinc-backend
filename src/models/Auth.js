@@ -21,7 +21,6 @@ let emailCheck = (email) => {
   return new Promise((resolve, reject) => {
     let emailquery = "SELECT u.email FROM users u WHERE u.email = ?";
     db.query(emailquery, email, function (err, result) {
-
       if (err) return reject(err);
       if (result.length > 0) {
         return resolve(true);
@@ -52,7 +51,7 @@ let registerUser = (name, username, email, password) => {
 let loginUser = (usernameemail, password) => {
   return new Promise((resolve, reject) => {
     let dbquery =
-      "SELECT u.id, u.email, u.name , u.username, u.password, ul.level_name AS 'role' FROM users u JOIN user_level ul on u.user_level = ul.level_id WHERE (u.username = ? or u.email = ?)";
+      "SELECT u.id, u.email, u.name , u.username, u.password, u.phone, ul.level_name AS 'role' FROM users u JOIN user_level ul on u.user_level = ul.level_id WHERE (u.username = ? or u.email = ?)";
     db.query(dbquery, [usernameemail, usernameemail], function (err, result) {
       if (err) {
         return reject(err);

@@ -6,10 +6,10 @@ let {
   getCoursesPagination,
   courseSort,
   searchCourse,
-  getUserId,
   myClass,
   newClass,
   registerCourse,
+  getSubCoursesObjective,
 } = require("../models/Course");
 
 const userRegisterCourse = async (req, res) => {
@@ -78,24 +78,12 @@ const searchCoursebyName = async (req, res) => {
 };
 
 const getMyClass = async (req, res) => {
-  let email = "emirkharisma@arkademy.com";
+  let userId = req.query.id;
   try {
-    if (!email) {
-      return writeResponse(res, false, 401, "Enter User Email");
+    if (!userId) {
+      return writeResponse(res, false, 401, "Missing userId params");
     }
-    let UserId = await getUserId(email);
-    if (!UserId) {
-      return writeResponse(
-        res,
-        true,
-        200,
-        "This user hasn't registered in any class"
-      );
-    }
-    if (UserId === false) {
-      return writeResponse(res, false, 400, "Email Not Found");
-    }
-    let MyClass = await myClass(UserId[0].id);
+    let MyClass = await myClass(userId);
     return writeResponse(res, true, 200, "Data Recieved", MyClass);
   } catch (err) {
     return console.log(err);
@@ -103,18 +91,28 @@ const getMyClass = async (req, res) => {
 };
 
 const getNewClass = async (req, res) => {
-  let { email } = req.body;
+  const userId = req.query.id;
+  console.log(req);
   try {
-    if (!email) {
-      return writeResponse(res, false, 400, "Enter User Email");
+    if (!userId) {
+      return writeResponse(res, false, 400, "Missing userId params");
     }
-    let UserId = await getUserId(email);
-    console.log(UserId);
-    if (UserId === false) {
-      return writeResponse(res, false, 400, "Email Not Found");
-    }
-    let NewClass = await newClass(UserId[0].id);
+    let NewClass = await newClass(userId);
     return writeResponse(res, true, 200, "Data Recieved", NewClass);
+  } catch (err) {
+    return writeError(res, err);
+  }
+};
+
+const getObjective = async (req, res) => {
+  let courseId = req.query.courseid;
+  console.log(req.query);
+  try {
+    if (!courseId) {
+      return writeError(res, 400, "Missing courseid params");
+    }
+    let objectives = await getSubCoursesObjective(courseId);
+    return writeResponse(res, true, 200, "Data Found", objectives);
   } catch (err) {
     return writeError(res, err);
   }
@@ -147,9 +145,10 @@ const coursesSort = async (req, res) => {
 
 module.exports = {
   getAllCourses,
-  allCoursePagination, 
+  allCoursePagination,
   getMyClass,
   getNewClass,
+  getObjective,
   coursesSort,
   searchCoursebyName,
   userRegisterCourse,

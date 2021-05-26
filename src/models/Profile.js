@@ -1,11 +1,10 @@
 let db = require("../database/mysql");
 let bcrypt = require("bcrypt");
 
-let getUserProfile = (usernameemail) => {
+let getUserProfile = (id) => {
   return new Promise((resolve, reject) => {
-    const query =
-      "SELECT u.name, u.phone, u.password FROM users u WHERE (u.username = ? OR u.email = ?)";
-    db.query(query, [usernameemail, usernameemail], function (err, result) {
+    const query = "SELECT u.name, u.phone FROM users u WHERE id = ?";
+    db.query(query, id, function (err, result) {
       if (err) return reject(err);
       if (!result) return resolve(false);
       return resolve(result);
@@ -13,9 +12,9 @@ let getUserProfile = (usernameemail) => {
   });
 };
 
-let updateUserProfile = (data, email) => {
+let updateUserProfile = (data, id) => {
   return new Promise((resolve, reject) => {
-    const query = "UPDATE users SET ? WHERE email = ?";
+    const query = "UPDATE users SET ? WHERE id = ?";
     let password = data.password;
     data.password
       ? bcrypt.hash(password, 10, (err, hashedPass) => {
@@ -23,7 +22,7 @@ let updateUserProfile = (data, email) => {
             return reject(err);
           }
           data.password = hashedPass;
-          db.query(query, [data, email], function (err, result) {
+          db.query(query, [data, id], function (err, result) {
             if (err) {
               return reject(err);
             }
@@ -33,11 +32,15 @@ let updateUserProfile = (data, email) => {
             return resolve(false);
           });
         })
-      : db.query(query, [data, email], (err, result) => {
+      : db.query(query, [data, id], (err, result) => {
           if (err) {
+            console.log({ err });
             return reject(err);
           }
-          return resolve(result);
+          if (result.affectedRows !== 0) {
+            return resolve(true);
+          }
+          return resolve(false);
         });
   });
 };
