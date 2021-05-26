@@ -4,6 +4,10 @@
   "description": "<!-- PROJECT LOGO --> <br /> <p align=\"center\">   <a href=\"https://github.com/rskrfn/thinc-frontend\">     <img src=\"src/assets/logo.svg\" alt=\"Logo\" width=\"90\" height=\"90\">   </a>",
   "main": "index.js",
   "scripts": {
+    "start": "pm2 start index.js",
+    "restart": "pm2 restart index.js",
+    "reload": "pm2 reload index.js",
+    "stop": "pm2 stop index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
