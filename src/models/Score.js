@@ -28,11 +28,11 @@ let getscore = (email) => {
   });
 };
 
-let postscore = () => {
-  return new Promise((resolve, reject) => {
-    let postquery = ""
-  })
-}
+// let postscore = () => {
+//   return new Promise((resolve, reject) => {
+//     let postquery = ""
+//   })
+// }
 
 module.exports = {
     isenroled, getscore

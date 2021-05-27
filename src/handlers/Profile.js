@@ -9,7 +9,7 @@ const getUser = async (req, res) => {
     if (result === false) {
       return writeResponse(res, false, 400, "User Not Found");
     }
-    return writeResponse(res, true, 200, "Success", { result: result });
+    return writeResponse(res, true, 200, "Success", result);
   } catch (err) {
     return writeError(res, err);
   }

@@ -4,6 +4,7 @@ let {
   checkOTP,
   createOTP,
   passwordChange,
+  deleteOTP,
 } = require("../models/Reset");
 let { writeResponse, writeError } = require("../helpers/Response");
 const nodemailer = require("nodemailer");
@@ -89,7 +90,7 @@ const sendEmail = async (req, res) => {
     if (!createotp) {
       return writeError(res, 500, "Failed to create OTP code");
     }
-    // console.log(createotp);
+    console.log(createotp);
     await sendVerification(code);
     // console.log(sendcode);
     return writeResponse(res, true, 200, "Email Sent");
@@ -111,6 +112,7 @@ const passwordUpdate = async (req, res) => {
       return writeResponse(res, false, 400, "Email Not Registered");
     }
     await passwordChange(newpassword, email);
+    await deleteOTP(emailAvailable);
     return writeResponse(res, true, 200, "Password Changed");
   } catch (err) {
     return writeError(res, err);
@@ -153,17 +155,21 @@ const validateOTP = async (req, res) => {
       return writeError(res, 404, "OTP empty");
     }
     let otpstatus = await checkOTP(query.email, query.otp);
+    console.log(otpstatus);
     if (!otpstatus) {
       return writeError(res, 404, "Wrong otp code");
     }
+    // otpstatus = {};
     let isvalid = isValid(otpstatus[0].valid_until);
     // console.log(isvalid);
     if (!isvalid) {
+      // isvalid = {};
       return writeError(res, 406, "OTP Expired");
     }
-    return writeResponse(res, true, 200, "OTP valid", isvalid);
+    return writeResponse(res, true, 200, "OTP valid");
   } catch (err) {
-    return writeError(res, 500, err);
+    console.log(err)
+    return writeError(res, 500, "err");
   }
 };
 

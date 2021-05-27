@@ -10,6 +10,7 @@ let {
   newClass,
   registerCourse,
   getSubCoursesObjective,
+  getScore,
 } = require("../models/Course");
 
 const userRegisterCourse = async (req, res) => {
@@ -39,7 +40,7 @@ const getAllCourses = async (req, res) => {
 const allCoursePagination = async (req, res) => {
   try {
     let { query, baseUrl, path, hostname, protocol } = req;
-    console.log(req.query);
+    // console.log(req.query);
     let allcoursepagination = await getCoursesPagination(query);
     if (!allcoursepagination) {
       return writeResponse(res, false, 400, "No Data");
@@ -65,7 +66,7 @@ const allCoursePagination = async (req, res) => {
 const searchCoursebyName = async (req, res) => {
   let { search } = req.query;
   let searchValue = "%" + search + "%";
-  console.log(searchValue);
+  // console.log(searchValue);
   try {
     if (!search) {
       return writeResponse(res, false, 400, "Enter Search Value");
@@ -106,7 +107,7 @@ const getNewClass = async (req, res) => {
 
 const getObjective = async (req, res) => {
   let courseId = req.query.courseid;
-  console.log(req.query);
+  // console.log(req.query);
   try {
     if (!courseId) {
       return writeError(res, 400, "Missing courseid params");
@@ -130,7 +131,7 @@ const coursesSort = async (req, res) => {
         return mysql.raw(q);
     }
   });
-  console.log(sortValue);
+  // console.log(sortValue);
   try {
     if (!sort) {
       return writeResponse(res, false, 400, "Empty Query");
@@ -139,7 +140,23 @@ const coursesSort = async (req, res) => {
     console.log(SortCourse);
     return writeResponse(res, true, 200, "Data Received", SortCourse);
   } catch (err) {
-    return writeError(res, err);
+    return writeError(res, 500, err);
+  }
+};
+const getUserScore = async (req, res) => {
+  let query = req.query;
+  try {
+    if (!query.userid || !query.courseid || !query) {
+      return writeError(res, 400, "Missing params");
+    }
+    let result = await getScore(query.userid, query.courseid);
+    if (!result) {
+      return writeError(res, 404, "Data not found");
+    }
+    return writeResponse(res, true, 200, "Coba", result);
+  } catch (err) {
+    // console.log(err);
+    return writeError(res, 500, err);
   }
 };
 
@@ -152,4 +169,5 @@ module.exports = {
   coursesSort,
   searchCoursebyName,
   userRegisterCourse,
+  getUserScore,
 };

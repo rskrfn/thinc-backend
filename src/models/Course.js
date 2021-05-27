@@ -188,6 +188,30 @@ let searchCourse = (searchValue) => {
     });
   });
 };
+let getScore = (userid, courseid) => {
+  return new Promise((resolve, reject) => {
+    const queryusercourseid =
+      "SELECT uc.id FROM user_course uc WHERE uc.user_id = ? AND uc.course_id = ?";
+    db.query(queryusercourseid, [userid, courseid], (err, result) => {
+      if (err) return reject(err);
+      // console.log(result);
+      if (!result.length) {
+        return resolve(false);
+      }
+      if (result.length > 0) {
+        let queryscore =
+          'SELECT sc.subcourse_name AS "Name", s.score AS "Score" FROM score s JOIN subcourses sc ON sc.id = s.id_subcourses WHERE s.id_user_course = ?';
+        db.query(queryscore, [result[0].id], (err, scoreresult) => {
+          if (err) return reject(err);
+          if (scoreresult.length > 0) {
+            // console.log(scoreresult);
+            return resolve(scoreresult);
+          }
+        });
+      }
+    });
+  });
+};
 
 let registerCourse = (userid, courseid) => {
   return new Promise((resolve, reject) => {
@@ -278,6 +302,7 @@ let registerCourse = (userid, courseid) => {
     });
   });
 };
+
 module.exports = {
   getUserId,
   getUserLevel,
@@ -293,4 +318,5 @@ module.exports = {
   getCoursesPagination,
   courseSort,
   searchCourse,
+  getScore,
 };
