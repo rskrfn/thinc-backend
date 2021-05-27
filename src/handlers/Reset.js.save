@@ -39,7 +39,7 @@ const sendEmail = async (req, res) => {
 
   let { email } = req.body;
   let account = {
-    email: process.env.EMAIL,
+    email,
     password: process.env.EMAIL_PASSWORD,
   };
   const handlebarOptions = {
@@ -72,7 +72,7 @@ const sendEmail = async (req, res) => {
     };
     transporter.sendMail(mailOptions, function (err, data) {
       if (err) {
-        return console.log(err);
+        return err;
       } else {
         return data;
       }
