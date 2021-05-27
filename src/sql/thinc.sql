@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 26, 2021 at 05:30 AM
+-- Generation Time: May 27, 2021 at 04:36 AM
 -- Server version: 10.4.18-MariaDB
 -- PHP Version: 7.3.27
 
@@ -138,32 +138,6 @@ CREATE TABLE `otp` (
   `timestamp` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `otp`
---
-
-INSERT INTO `otp` (`id`, `user_id`, `otp_code`, `valid_until`, `timestamp`) VALUES
-(8, 139, 8238, '2021-05-13T15:22:42Z', '2021-05-13 19:22:42'),
-(9, 139, 8900, '2021-05-13T21:30:39Z', '2021-05-14 01:30:39'),
-(10, 140, 25, '2021-05-13T21:34:01Z', '2021-05-14 01:34:01'),
-(11, 140, 8705, '2021-05-13T21:35:21Z', '2021-05-14 01:35:21'),
-(12, 140, 5296, '2021-05-13T21:36:26Z', '2021-05-14 01:36:26'),
-(13, 140, 6271, '2021-05-13T22:00:22Z', '2021-05-14 02:00:22'),
-(14, 140, 2369, '2021-05-13T22:01:51Z', '2021-05-14 02:01:51'),
-(15, 140, 8216, '2021-05-13T22:05:20Z', '2021-05-14 02:05:20'),
-(16, 139, 1770, '2021-05-22T17:32:14Z', '2021-05-22 21:32:14'),
-(17, 140, 853, '2021-05-22T17:54:55Z', '2021-05-22 21:54:55'),
-(18, 140, 6460, '2021-05-22T17:57:35Z', '2021-05-22 21:57:35'),
-(19, 140, 4770, '2021-05-22T18:06:38Z', '2021-05-22 22:06:38'),
-(20, 140, 7886, '2021-05-22T18:09:11Z', '2021-05-22 22:09:11'),
-(21, 140, 2848, '2021-05-23T06:47:00Z', '2021-05-23 10:47:00'),
-(22, 140, 8750, '2021-05-23T06:55:36Z', '2021-05-23 10:55:36'),
-(23, 140, 9622, '2021-05-23T06:56:13Z', '2021-05-23 10:56:13'),
-(24, 140, 874, '2021-05-23T07:18:49Z', '2021-05-23 11:18:49'),
-(25, 140, 256, '2021-05-23T07:20:50Z', '2021-05-23 11:20:50'),
-(26, 140, 563, '2021-05-23T07:36:23Z', '2021-05-23 11:36:23'),
-(27, 140, 2640, '2021-05-23T07:59:23Z', '2021-05-23 11:59:23');
-
 -- --------------------------------------------------------
 
 --
@@ -182,24 +156,24 @@ CREATE TABLE `score` (
 --
 
 INSERT INTO `score` (`id`, `id_user_course`, `id_subcourses`, `score`) VALUES
-(1, 7, 500, NULL),
-(2, 7, 501, NULL),
-(3, 7, 502, NULL),
-(4, 7, 503, NULL),
-(5, 7, 504, NULL),
-(6, 7, 505, NULL),
+(1, 7, 500, 80),
+(2, 7, 501, 70),
+(3, 7, 502, 75),
+(4, 7, 503, 85),
+(5, 7, 504, 50),
+(6, 7, 505, 90),
 (7, 7, 506, NULL),
 (8, 7, 507, NULL),
 (9, 7, 508, NULL),
 (10, 7, 509, NULL),
-(11, 8, 510, NULL),
+(11, 8, 510, 90),
 (12, 8, 511, NULL),
 (13, 8, 512, NULL),
 (14, 8, 513, NULL),
-(15, 9, 510, NULL),
-(16, 9, 511, NULL),
-(17, 9, 512, NULL),
-(18, 9, 513, NULL);
+(19, 16, 514, NULL),
+(20, 16, 515, NULL),
+(21, 16, 516, NULL),
+(22, 16, 517, NULL);
 
 -- --------------------------------------------------------
 
@@ -229,10 +203,22 @@ INSERT INTO `subcourses` (`id`, `course_id`, `subcourse_name`, `objective`) VALU
 (507, 300, 'Learning React.js', 'Learning React.js'),
 (508, 300, 'UX for Web Design', 'Learning UX'),
 (509, 300, 'Final-term Exam', 'Final-term exam to measure your knowledge'),
-(510, 301, 'Subcourse 1', NULL),
-(511, 301, 'Subcourse 2', NULL),
-(512, 301, 'Subcourse 3', NULL),
-(513, 301, 'Subcourse 4', NULL);
+(510, 301, 'Subcourse 1', 'Objective 1'),
+(511, 301, 'Subcourse 2', 'Objective 2'),
+(512, 301, 'Subcourse 3', 'Objective 3'),
+(513, 301, 'Subcourse 4', 'Objective 4'),
+(514, 302, 'Subcourse 1', 'Objective 1'),
+(515, 302, 'Subcourse 2', 'Objective 2'),
+(516, 302, 'Subcourse 3', 'Objective 3'),
+(517, 302, 'Subcourse 4', 'Objective 4'),
+(518, 303, 'Subcourse 1', 'Objective 1'),
+(519, 303, 'Subcourse 2', 'Objective 2'),
+(520, 303, 'Subcourse 3', 'Objective 3'),
+(521, 303, 'Subcourse 4', 'Objective 4'),
+(522, 304, 'Subcourse 1', 'Objective 1'),
+(523, 304, 'Subcourse 2', 'Objective 2'),
+(524, 304, 'Subcourse 3', 'Objective 3'),
+(525, 304, 'Subcourse 4', 'Objective 4');
 
 -- --------------------------------------------------------
 
@@ -269,8 +255,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `username`, `email`, `password`, `phone`, `display_picture`, `user_level`) VALUES
 (101, 'Emir Kharisma', 'kharismaemir', 'emirkharisma@arkademy.com', '$2b$10$ftRrWHWxtt56NL98xZNsSeFumLsJN.zDS6moY/ELDJY7Go2Df7H0m', '0', '', 2),
-(139, 'Muhammad Ilham', 'member', 'Ilham@example.com', '$2b$10$iVdLFeGZxsVicZcyjXuetOTvgjholfxTRYAmQCsRTBIQJOQycqrUu', '6287870720737', NULL, 2),
-(140, 'Elenna Liandra', 'Elenn', 'alzamafero@gmail.com', '$2b$10$IvxAJh0tm5HbsjG7VNerM.GIsfgI4ITccw1Z9h/EhakYYIwUSDQ0.', '6288877776665', NULL, 2);
+(139, 'Muhammad Ilham', 'member', 'Ilham@example.com', '$2b$10$1WItFkk0ZkWE5l/AKyGHrOIuQjiWPZXasEf2svFDTfLjkAofodkEG', '6287870720735', NULL, 2),
+(140, 'Elenna Liandra', 'Elenn', 'alzamafero@gmail.com', '$2b$10$bsilQLt6uCTMsAWsw9OC8uBdnJC44jBxJVffBBu0qFnQM9GmUh.Km', '6288877776666', NULL, 2);
 
 -- --------------------------------------------------------
 
@@ -297,7 +283,8 @@ INSERT INTO `user_course` (`id`, `user_id`, `course_id`) VALUES
 (6, 101, 313),
 (7, 140, 300),
 (8, 140, 301),
-(9, 139, 301);
+(9, 139, 301),
+(16, 140, 302);
 
 -- --------------------------------------------------------
 
@@ -402,19 +389,19 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `otp`
 --
 ALTER TABLE `otp`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `score`
 --
 ALTER TABLE `score`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `subcourses`
 --
 ALTER TABLE `subcourses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=514;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=526;
 
 --
 -- AUTO_INCREMENT for table `token_blacklist`
@@ -432,7 +419,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `user_course`
 --
 ALTER TABLE `user_course`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
