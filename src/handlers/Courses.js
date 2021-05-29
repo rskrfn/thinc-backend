@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-let mysql = require("mysql");
+let mysql = require("mysql2");
 let { writeError, writeResponse } = require("../helpers/Response");
 let {
   getCourses,
