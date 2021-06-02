@@ -3,7 +3,6 @@ let mysql = require("mysql2");
 let { writeError, writeResponse } = require("../helpers/Response");
 let {
   getCourses,
-  getCoursesPagination,
   courseSort,
   searchCourse,
   myClass,
@@ -11,6 +10,7 @@ let {
   registerCourse,
   getSubCoursesObjective,
   getScore,
+  getNewClassNew,
 } = require("../models/Course");
 
 const userRegisterCourse = async (req, res) => {
@@ -37,29 +37,101 @@ const getAllCourses = async (req, res) => {
     return writeResponse(res, false, 500, err);
   }
 };
-const allCoursePagination = async (req, res) => {
+const newClassPaginated = async (req, res) => {
   try {
-    let { query, baseUrl, path, hostname, protocol } = req;
-    // console.log(req.query);
-    let allcoursepagination = await getCoursesPagination(query);
-    if (!allcoursepagination) {
+    let { baseUrl, path, hostname, protocol } = req;
+    let { userid, search, sort, category, level, price, page } = req.query;
+    if (!userid) {
+      return writeError(res, 403, "User id required");
+    }
+    const searchval = search ? `%${search}%` : "%%";
+    let sortval, sortby, order;
+    if (!sort) {
+      sort = null;
+    }
+    if (sort) {
+      sortval = sort.split("-");
+      switch (sortval[0].toLowerCase()) {
+        case "category":
+          sortby = mysql.raw("cat.category");
+          break;
+        case "level":
+          sortby = mysql.raw("course_level");
+          break;
+        case "price":
+          sortby = mysql.raw("c.price");
+          break;
+        default:
+          sortby = null;
+          break;
+      }
+      console.log("sortby " + sortby);
+      order = sortval[1] === "AZ" ? mysql.raw("ASC") : mysql.raw("DESC");
+    }
+    if (!category) {
+      category = null;
+    }
+    if (!level) {
+      level = null;
+    }
+    if (!level) {
+      level = null;
+    }
+    if (!price) {
+      price = null;
+    }
+    if (!page) {
+      page = 1;
+    }
+    // console.log(userid);
+    let newClass = await getNewClassNew(
+      userid,
+      searchval,
+      category,
+      level,
+      price,
+      sortby,
+      order,
+      page
+    );
+    console.log("result " + newClass.result.length);
+    if (!newClass.result.length) {
       return writeResponse(res, false, 400, "No Data");
     }
-    const { count, page, limit, result } = allcoursepagination;
+    const { count, currpage, limit, result } = newClass;
+    console.log(limit);
     let totalPage = Math.ceil(count / limit);
-    const url =
-      protocol + "://" + hostname + ":" + process.env.PORT + baseUrl + path;
-    let prev =
-      page === 1 ? null : url + `?page=${page - 1}&limit=${query.limit || 5}`;
-    let next =
-      page === totalPage
-        ? null
-        : url + `?page=${page + 1}&limit=${query.limit || 5}`;
-    const info = { count, page, totalPage, next, prev };
-    const display = { info, result };
-    return writeResponse(res, true, 200, "Data Received", display);
+    if (currpage > totalPage) {
+      return writeError(
+        res,
+        404,
+        `Data cannot be found on page ${currpage}, please go back to previous page`
+      );
+    }
+    if (currpage <= totalPage) {
+      const url =
+        protocol +
+        "://" +
+        hostname +
+        ":" +
+        process.env.PORT +
+        baseUrl +
+        path +
+        "?userid=" +
+        userid;
+      +"&";
+      let prev =
+        page === 1 ? null : url + `?page=${currpage - 1}&limit=${limit || 5}`;
+      let next =
+        currpage === totalPage
+          ? null
+          : url + `?page=${currpage + 1}&limit=${limit || 5}`;
+      const info = { count, currpage, totalPage, next, prev };
+      const display = { info, result };
+      return writeResponse(res, true, 200, "Data Received", display);
+    }
   } catch (err) {
-    return writeResponse(res, false, 500, err);
+    return console.log(err);
   }
 };
 
@@ -121,7 +193,7 @@ const getObjective = async (req, res) => {
 
 const coursesSort = async (req, res) => {
   let sort = req.query;
-  let sortValue = sort.sort.split("-").map((q) => {
+  let sortValue = sort.sort?.split("-").map((q) => {
     switch (q) {
       case "AZ":
         return mysql.raw("ASC");
@@ -162,7 +234,7 @@ const getUserScore = async (req, res) => {
 
 module.exports = {
   getAllCourses,
-  allCoursePagination,
+  newClassPaginated,
   getMyClass,
   getNewClass,
   getObjective,

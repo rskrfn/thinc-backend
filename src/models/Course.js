@@ -119,44 +119,69 @@ let courseSearch = (coursename) => {
   });
 };
 
-let getCourses = () => {
-  return new Promise((resolve, reject) => {
-    const coursequery =
-      "SELECT `id`, `course_name`, `category`, `description`, `course_level`, `price` FROM `courses`";
-    db.query(coursequery, (err, result) => {
-      if (err) {
-        return reject(err);
-      } else {
-        return resolve(result);
-      }
-    });
-  });
-};
-
-let getCoursesPagination = (query) => {
+let getNewClassNew = (
+  userid,
+  search,
+  category,
+  level,
+  price,
+  sortby,
+  order,
+  page
+) => {
   return new Promise((resolve, reject) => {
     // const userid = query.userid;
-    const mainquery =
-      "SELECT c.course_name, cat.category, c.description, cl.level_name AS 'level', c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category ";
-    const secondaryquery = " LIMIT ? OFFSET ?";
-    const paginatedquery = mainquery.concat(" ", secondaryquery);
-    const limit = Number(query.limit) || 10;
-    const page = Number(query.page) || 1;
+    let mainquery = [
+      "SELECT c.course_name, cat.category, c.description, cl.level_name AS 'level', c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category",
+      "WHERE c.id NOT IN (SELECT user_course.course_id FROM user_course WHERE user_course.user_id = ?)",
+      "&& c.course_name LIKE ?",
+    ];
+    console.log(userid, search, category, level, price, sortby, order, page);
+    const categoryquery = "&& cat.category = ?";
+    const levelquery = "&& cl.level_name = ?";
+    const pricequery = "&& c.price = ?";
+    const sortquery = "ORDER BY ? ?";
+    const paginationquery = "LIMIT ? OFFSET ?";
+    const limit = 10;
+    const currpage = page !== undefined ? Number(page) : 1;
     const offset = (page - 1) * limit;
-    db.query(paginatedquery, [limit, offset], (err, result) => {
+    const values = [userid, search];
+    if (category) {
+      values.push(category);
+      mainquery.push(categoryquery);
+    }
+    if (level) {
+      values.push(level);
+      mainquery.push(levelquery);
+    }
+    if (price) {
+      values.push(price);
+      mainquery.push(pricequery);
+    }
+    if (sortby && order) {
+      values.push(sortby, order);
+      mainquery.push(sortquery);
+    }
+    // console.log(userid);
+    // console.log(search);
+    values.push(limit, offset);
+    // console.log(offset);
+    mainquery.push(paginationquery);
+    // console.log(values);
+    db.query(mainquery.join(" "), values, (err, result) => {
       if (err) return reject(err);
-      const qsCount = "SELECT COUNT(*) AS 'count' FROM courses";
-      db.query(qsCount, (err, data) => {
-        if (err) return reject(err);
-        const { count } = data[0];
-        let finalResult = {
-          count,
-          page,
-          limit,
-          result,
-        };
-        resolve(finalResult);
-      });
+      // console.log("length =>> " + Object.keys(result).length);
+      // const count = Number(Object.keys(result).length);
+      // const qsCount = "SELECT COUNT(*) AS 'count' FROM courses";
+      const count = Object.keys(result).length;
+      let finalResult = {
+        count,
+        currpage,
+        limit,
+        result,
+      };
+      // console.log(finalResult);
+      return resolve(finalResult);
     });
   });
 };
@@ -178,7 +203,7 @@ let courseSort = (sortValue) => {
 let searchCourse = (searchValue) => {
   return new Promise((resolve, reject) => {
     const searchquery =
-      "SELECT c.course_name AS 'Course Name', c.category AS 'Category', c.description AS 'Description', c.course_level AS 'Level', c.price AS 'Price'  FROM courses c WHERE `course_name` LIKE ?";
+      "SELECT c.course_name AS 'Name', c.id_category AS 'Category', c.description AS 'Description', c.course_level AS 'Level', c.price AS 'Price'  FROM courses c WHERE `course_name` LIKE ?";
     db.query(searchquery, [searchValue], (err, result) => {
       if (err) return reject(err);
       if (result.length === 0) {
@@ -314,8 +339,7 @@ module.exports = {
   getSubCoursesObjective,
   registerCourse,
   courseSearch,
-  getCourses,
-  getCoursesPagination,
+  getNewClassNew,
   courseSort,
   searchCourse,
   getScore,

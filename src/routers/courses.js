@@ -2,7 +2,7 @@ const Router = require("express").Router();
 
 //import
 let {
-  allCoursePagination,
+  newClassPaginated,
   getMyClass,
   getNewClass,
   coursesSort,
@@ -15,11 +15,11 @@ let { createCourse } = require("../handlers/Fasilitator");
 let { deleteCourse } = require("../handlers/Fasilitator");
 let authorize = require("../middlewares/Authorize");
 
-Router.get("/all", allCoursePagination);
+Router.get("/all", newClassPaginated);
 Router.get("/myclass", getMyClass);
 Router.get("/newclass", getNewClass); //opsional
 Router.get("/objective", getObjective);
-Router.get("/", coursesSort);
+// Router.get("/", coursesSort);
 Router.get("/", searchCoursebyName);
 Router.post("/register", authorize.memberOnly, userRegisterCourse);
 
