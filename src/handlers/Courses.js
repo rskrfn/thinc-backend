@@ -41,6 +41,7 @@ const newClassPaginated = async (req, res) => {
   try {
     let { baseUrl, path, hostname, protocol } = req;
     let { userid, search, sort, category, level, price, page } = req.query;
+    console.log(req.query);
     if (!userid) {
       return writeError(res, 403, "User id required");
     }

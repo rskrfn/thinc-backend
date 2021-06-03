@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 const Router = require("express").Router();
-const { uploadDP, multerUpload } = require("../middlewares/Multer");
+const {multerUpload } = require("../middlewares/Multer");
 const { getUser, updateProfile } = require("../handlers/Profile");
 
 Router.get("/", getUser);

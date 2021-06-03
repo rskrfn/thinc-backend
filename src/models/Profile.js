@@ -3,7 +3,8 @@ let bcrypt = require("bcrypt");
 
 let getUserProfile = (id) => {
   return new Promise((resolve, reject) => {
-    const query = "SELECT u.name, u.phone FROM users u WHERE id = ?";
+    const query =
+      "SELECT u.name, u.phone, u.email, u.display_picture FROM users u WHERE id = ?";
     db.query(query, id, function (err, result) {
       if (err) return reject(err);
       if (!result) return resolve(false);

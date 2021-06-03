@@ -132,7 +132,7 @@ let getNewClassNew = (
   return new Promise((resolve, reject) => {
     // const userid = query.userid;
     let mainquery = [
-      "SELECT c.course_name, cat.category, c.description, cl.level_name AS 'level', c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category",
+      "SELECT c.course_name AS 'Name', cat.category AS 'Category', c.description 'Description', cl.level_name AS 'Level', c.price AS 'Price' FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category",
       "WHERE c.id NOT IN (SELECT user_course.course_id FROM user_course WHERE user_course.user_id = ?)",
       "&& c.course_name LIKE ?",
     ];

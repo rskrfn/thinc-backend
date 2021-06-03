@@ -1,26 +1,25 @@
 const multer = require("multer");
 const path = require("path");
 
-const dpStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./public/images/displaypicture");
-  },
-  filename: function (req, file, cb) {
-    let fileNameFormat = `${file.fieldname}_${Date.now()}${path.extname(
-      file.originalname
-    )}`;
-    cb(null, fileNameFormat);
-  },
-});
+// const dpStorage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "./public/displaypicture");
+//   },
+//   filename: function (req, file, cb) {
+//     let fileNameFormat = `${file.fieldname}_${Date.now()}${path.extname(
+//       file.originalname
+//     )}`;
+//     cb(null, fileNameFormat);
+//   },
+// });
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/images");
+    cb(null, "./public/displaypicture");
   },
   filename: function (req, file, cb) {
-    let fileNameFormat = `${Date.now()}_${file.fieldname}${path.extname(
-      file.originalname
-    )}`;
+    let fileNameFormat = `dp_${Date.now()}${path.extname(file.originalname)}`;
+    console.log(file);
     cb(null, fileNameFormat);
   },
 });
@@ -30,7 +29,7 @@ const power = (byte, n) => {
   return 1;
 };
 let bytes = 1000;
-let limits = { fileSize: 2 * power(bytes, 2) };
+let limits = { fileSize: 5 * power(bytes, 2) };
 const fileFilter = (req, file, cb) => {
   const acceptedFileType = /jpg|jpeg|gif|png/i;
   const isFileTypeAccepted = acceptedFileType.test(
@@ -40,11 +39,11 @@ const fileFilter = (req, file, cb) => {
   cb(null, true);
 };
 
-let uploadDP = multer({
-  dpStorage,
-  limits,
-  fileFilter,
-});
+// let uploadDP = multer({
+//   dpStorage,
+//   limits,
+//   fileFilter,
+// });
 
 let multerUpload = multer({
   storage,
@@ -52,4 +51,4 @@ let multerUpload = multer({
   fileFilter,
 });
 
-module.exports = {uploadDP, multerUpload};
+module.exports = {multerUpload };

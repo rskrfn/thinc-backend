@@ -19,8 +19,8 @@ const updateProfile = async (req, res) => {
     let { file } = req;
     let data = {};
     let token = req.headers.token;
-    // console.log({ req });
-    let display_picture = file ? `/images/${file.filename}` : null;
+    // console.log("Handler" + file);
+    let display_picture = file ? `/displaypicture/${file.filename}` : null;
     if (!display_picture) {
       data = { ...req.body };
     }
@@ -32,7 +32,7 @@ const updateProfile = async (req, res) => {
     }
     // console.log(data)
     let result = await updateUserProfile(data, req.body.id);
-    console.log(result);
+    // console.log(result);
     if (result === false) {
       return writeResponse(res, false, 400, "Data Not Updated");
     }
