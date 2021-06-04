@@ -1,14 +1,16 @@
 //router
 const Router = require("express").Router();
 const usersRouter = require("./users");
-const coursesRouter = require("./courses")
-const profileRouter = require("./profile")
+const coursesRouter = require("./courses");
+const profileRouter = require("./profile");
+const chatRouter = require("./Chat");
 
 //user subrouter
 Router.use("/users", usersRouter);
 //courses subrouter
-Router.use("/courses", coursesRouter)
+Router.use("/courses", coursesRouter);
 //profile subrouter
-Router.use("/profile", profileRouter)
-
+Router.use("/profile", profileRouter);
+//chat subrouter
+Router.use("/chat", chatRouter);
 module.exports = Router;

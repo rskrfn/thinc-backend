@@ -5,7 +5,7 @@ const { writeResponse, writeError } = require("../helpers/Response");
 const getUser = async (req, res) => {
   try {
     let result = await getUserProfile(req.query.id);
-    console.log(result);
+    // console.log(result);
     if (result === false) {
       return writeResponse(res, false, 400, "User Not Found");
     }
