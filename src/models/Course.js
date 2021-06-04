@@ -133,7 +133,7 @@ let getNewClassNew = (
     // const userid = query.userid;
     let mainquery = [
       "SELECT c.course_name AS 'Name', cat.category AS 'Category', c.description 'Description', cl.level_name AS 'Level', c.price AS 'Price' FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category",
-      "WHERE c.id  (SELECT user_course.course_id FROM user_course WHERE user_course.user_id = ?)",
+      "WHERE c.id NOT IN (SELECT user_course.course_id FROM user_course WHERE user_course.user_id = ?)",
       "&& c.course_name LIKE ?",
     ];
     console.log(userid, search, category, level, price, sortby, order, page);
