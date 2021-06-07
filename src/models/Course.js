@@ -66,12 +66,13 @@ let deletecourse = (coursename) => {
 
 let myClass = (userId) => {
   return new Promise((resolve, reject) => {
+    // console.log("halo");
     let myclassquery =
       "SELECT c.id AS 'id', c.course_name AS 'Name', cat.category AS 'Category', c.description AS 'Description', cl.level_name AS 'Level', c.price AS 'Price' FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN user_course uc ON c.id = uc.course_id JOIN course_category cat ON cat.id = c.id_category WHERE uc.user_id = ?";
-    db.query(myclassquery, [userId], function (err, result) {
+    db.query(myclassquery, userId, function (err, result) {
       if (err) return reject(err);
       if (result.length === 0) {
-        return reject(result);
+        return resolve(false);
       }
       return resolve(result);
     });
@@ -132,11 +133,11 @@ let getNewClassNew = (
   return new Promise((resolve, reject) => {
     // const userid = query.userid;
     let mainquery = [
-      "SELECT c.course_name AS 'Name', cat.category AS 'Category', c.description 'Description', cl.level_name AS 'Level', c.price AS 'Price' FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category",
+      "SELECT c.id, c.course_name AS 'Name', cat.category AS 'Category', c.description 'Description', cl.level_name AS 'Level', c.price AS 'Price' FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category",
       "WHERE c.id NOT IN (SELECT user_course.course_id FROM user_course WHERE user_course.user_id = ?)",
       "&& c.course_name LIKE ?",
     ];
-    console.log(userid, search, category, level, price, sortby, order, page);
+    // console.log(userid, search, category, level, price, sortby, order, page);
     const categoryquery = "&& cat.category = ?";
     const levelquery = "&& cl.level_name = ?";
     const pricequery = "&& c.price = ?";
@@ -171,17 +172,21 @@ let getNewClassNew = (
     db.query(mainquery.join(" "), values, (err, result) => {
       if (err) return reject(err);
       // console.log("length =>> " + Object.keys(result).length);
-      // const count = Number(Object.keys(result).length);
-      // const qsCount = "SELECT COUNT(*) AS 'count' FROM courses";
-      const count = Object.keys(result).length;
-      let finalResult = {
-        count,
-        currpage,
-        limit,
-        result,
-      };
-      // console.log(finalResult);
-      return resolve(finalResult);
+      const qsCount =
+        "SELECT COUNT(*) AS 'count' FROM courses c WHERE c.id NOT IN (SELECT uc.course_id FROM user_course uc WHERE uc.user_id = ?)";
+      db.query(qsCount, userid, (err, countres) => {
+        if (err) return reject(err);
+        console.log("countres", countres);
+        let count = countres[0].count;
+        let finalResult = {
+          count,
+          currpage,
+          limit,
+          result,
+        };
+        // console.log(finalResult);
+        return resolve(finalResult);
+      });
     });
   });
 };

@@ -41,9 +41,12 @@ const newClassPaginated = async (req, res) => {
   try {
     let { baseUrl, path, hostname, protocol } = req;
     let { userid, search, sort, category, level, price, page } = req.query;
-    console.log(req.query);
+    // console.log(req.query);
     if (!userid) {
       return writeError(res, 403, "User id required");
+    }
+    if (page < 1) {
+      return writeError(res, 400, "Page query must be above 0");
     }
     const searchval = search ? `%${search}%` : "%%";
     let sortval, sortby, order;
@@ -66,7 +69,7 @@ const newClassPaginated = async (req, res) => {
           sortby = null;
           break;
       }
-      console.log("sortby " + sortby);
+      // console.log("sortby " + sortby);
       order = sortval[1] === "AZ" ? mysql.raw("ASC") : mysql.raw("DESC");
     }
     if (!category) {
@@ -95,12 +98,12 @@ const newClassPaginated = async (req, res) => {
       order,
       page
     );
-    console.log("result " + newClass.result.length);
+    // console.log("result " + newClass.result.length);
     if (!newClass.result.length) {
       return writeResponse(res, false, 400, "No Data");
     }
     const { count, currpage, limit, result } = newClass;
-    console.log(limit);
+    // console.log(limit);
     let totalPage = Math.ceil(count / limit);
     if (currpage > totalPage) {
       return writeError(
@@ -121,12 +124,8 @@ const newClassPaginated = async (req, res) => {
         "?userid=" +
         userid;
       +"&";
-      let prev =
-        page === 1 ? null : url + `?page=${currpage - 1}&limit=${limit || 5}`;
-      let next =
-        currpage === totalPage
-          ? null
-          : url + `?page=${currpage + 1}&limit=${limit || 5}`;
+      let prev = page <= 1 ? null : url + `?page=${currpage - 1}`;
+      let next = currpage === totalPage ? null : url + `?page=${currpage + 1}`;
       const info = { count, currpage, totalPage, next, prev };
       const display = { info, result };
       return writeResponse(res, true, 200, "Data Received", display);
@@ -158,6 +157,10 @@ const getMyClass = async (req, res) => {
       return writeResponse(res, false, 401, "Missing userId params");
     }
     let MyClass = await myClass(userId);
+    // console.log(MyClass);
+    if (!MyClass) {
+      return writeError(res, 404, "No Data");
+    }
     return writeResponse(res, true, 200, "Data Recieved", MyClass);
   } catch (err) {
     return console.log(err);
