@@ -5,14 +5,16 @@ let {
   newClassPaginated,
   getMyClass,
   getNewClass,
-  coursesSort,
   searchCoursebyName,
   userRegisterCourse,
   getObjective,
   getUserScore,
 } = require("../handlers/Courses");
-let { createCourse } = require("../handlers/Fasilitator");
-let { deleteCourse } = require("../handlers/Fasilitator");
+let {
+  createCourse,
+  deleteCourse,
+  getFacilitatorClass,
+} = require("../handlers/Fasilitator");
 let authorize = require("../middlewares/Authorize");
 
 Router.get("/all", newClassPaginated);
@@ -25,6 +27,7 @@ Router.post("/register", authorize.memberOnly, userRegisterCourse);
 
 Router.get("/score", getUserScore);
 
+Router.get("/facilitatorclass", authorize.facilitatorOnly, getFacilitatorClass);
 Router.post("/addcourse", authorize.facilitatorOnly, createCourse);
 Router.delete("/deletecourse", authorize.facilitatorOnly, deleteCourse);
 

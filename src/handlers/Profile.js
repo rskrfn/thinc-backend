@@ -30,15 +30,35 @@ const updateProfile = async (req, res) => {
     if (!token) {
       return writeError(res, 403, "Not Authorized");
     }
-    // console.log(data)
-    let result = await updateUserProfile(data, req.body.id);
-    // console.log(result);
+    if (!data.id) {
+      return writeError(res, 400, "User id not provided");
+    }
+    // if (!data.name && !data.phone && !data.password && !data.newpassword) {
+    //   return writeError(res, 400, "Missing query data");
+    // }
+    if (
+      (data.password && !data.newpassword) ||
+      (!data.password && data.newpassword)
+    ) {
+      return writeError(res, 400, "Enter your current password and a new one");
+    }
+    let result = await updateUserProfile(data);
+    console.log(result);
     if (result === false) {
       return writeResponse(res, false, 400, "Data Not Updated");
     }
     return writeResponse(res, true, 200, "Data Changed");
   } catch (err) {
-    // return console.log(err);
+    if (err === "User Not Found") {
+      return writeError(res, 404, "User not found");
+    }
+    if (err === "Wrong Password") {
+      return writeError(res, 404, "Wrong Password");
+    }
+    if (err === "Same Password") {
+      return writeError(res, 403, "Same Password");
+    }
+    console.log({ err });
   }
 };
 

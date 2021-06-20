@@ -55,27 +55,10 @@ io.on("connection", (socket) => {
   console.log(`${socket.id} connected`);
   io.emit("welcome", "Hello!!");
 
-  socket.on("adduser", (userId, socketId) => {
-    // console.log(socket, userId);
-    adduser(userId, socketId);
+  socket.on("adduser", (userId, socketId, coba) => {
+    console.log(userId, socket.id, coba);
+    adduser(userId, socket.id);
     io.emit("getUsers", onlineUser);
-  });
-
-  socket.on("private-message", (room, cb) => {
-    socket.join(room);
-    console.log(room);
-    cb({ status: true });
-  });
-
-  socket.on("chat", (body, room, cb) => {
-    console.log("Incoming message", body, room);
-    cb({ status: true });
-    if (room) {
-      io.to(room).emit("chat", body);
-    } else {
-      console.log("broadcast");
-      io.emit("chat", body);
-    }
   });
 
   socket.on("private", (body, receiverId, cb) => {
@@ -88,21 +71,21 @@ io.on("connection", (socket) => {
     cb({ status: false });
   });
 
-  socket.on("send-message", (body, room, cb) => {
-    console.log("Incoming message");
-    cb({ status: true });
-    if (room) {
-      console.log(room, body);
-      socket.to("room1").emit("message-received", body);
-    } else {
-      console.log(body);
-      socket.broadcast.emit("message-received", body);
+  socket.on("course-register", (owner, sender, cb) => {
+    let ownerId = getUser(owner.id);
+    console.log("io", owner, sender);
+    if (ownerId) {
+      io.to(ownerId.socketId).emit("course-notif", owner.coursename, sender);
+      cb({ status: true });
     }
+    console.log("io", ownerId);
+    cb({ status: false });
   });
+
   socket.on("disconnect", () => {
     removeUser(socket.id);
     console.log(onlineUser);
-    console.log("a user has been disconnected");
+    console.log("a user disconnected");
   });
 });
 server.listen(process.env.PORT, () => {

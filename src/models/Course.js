@@ -14,10 +14,10 @@ let getUserId = (email) => {
   });
 };
 
-let getUserLevel = (email) => {
+let getUserLevel = (id) => {
   return new Promise((resolve, reject) => {
-    let userquery = "SELECT u.user_level From users u WHERE u.email = ?";
-    db.query(userquery, [email], function (err, result) {
+    let userquery = "SELECT u.user_level From users u WHERE u.id = ?";
+    db.query(userquery, [id], function (err, result) {
       if (err) return reject(err);
       if (result.length === 0) {
         return resolve(false);
@@ -40,13 +40,33 @@ let searchcourse = (coursename) => {
   });
 };
 
-let addcourse = (coursename, category, description, level, price) => {
+let addcourse = (
+  id,
+  coursename,
+  category,
+  description,
+  level,
+  price,
+  schedule,
+  start,
+  end
+) => {
   return new Promise((resolve, reject) => {
     let addquery =
-      "INSERT INTO `courses`(`course_name`, `category`, `description`, `course_level`, `price`) VALUES (?, ?, ?, ?, ?)";
+      "INSERT INTO `courses`(`id_facilitator`, `course_name`, `id_category`, `description`, `course_level`, `price`, `schedule`, `start_time`, `end_time`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     db.query(
       addquery,
-      [coursename, category, description, level, price],
+      [
+        id,
+        coursename,
+        category,
+        description,
+        level,
+        price,
+        schedule,
+        start,
+        end,
+      ],
       function (err, result) {
         if (err) return reject(err);
         return resolve(result);
@@ -133,7 +153,7 @@ let getNewClassNew = (
   return new Promise((resolve, reject) => {
     // const userid = query.userid;
     let mainquery = [
-      "SELECT c.id, c.course_name AS 'Name', cat.category AS 'Category', c.description 'Description', cl.level_name AS 'Level', c.price AS 'Price' FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category",
+      "SELECT c.id, c.id_facilitator AS 'Owner', c.course_name AS 'Name', cat.category AS 'Category', c.description 'Description', cl.level_name AS 'Level', c.price AS 'Price' FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category",
       "WHERE c.id NOT IN (SELECT user_course.course_id FROM user_course WHERE user_course.user_id = ?)",
       "&& c.course_name LIKE ?",
     ];
@@ -333,6 +353,23 @@ let registerCourse = (userid, courseid) => {
   });
 };
 
+const facilitatorClass = (id) => {
+  return new Promise((resolve, reject) => {
+    const qs = `SELECT c.id as course_id, c.course_name as course_name, ct.category as category, c.description, c.schedule, c.start_time, c.end_time, 0 as students, c.backdrop FROM courses c JOIN course_category ct ON c.id_category = ct.id WHERE c.id_facilitator = ? && c.course_name NOT IN (SELECT c.course_name FROM courses c JOIN user_course uc ON c.id = uc.course_id) UNION SELECT c.id as course_id, c.course_name as course_name, ct.category as category, c.description, c.schedule, c.start_time, c.end_time, COUNT(uc.user_id) AS students, c.backdrop FROM courses c JOIN user_course uc ON c.id = uc.course_id  JOIN course_category ct ON c.id_category = ct.id WHERE c.id_facilitator = ? GROUP BY c.id ORDER BY course_id DESC`;
+    db.query(qs, [id, id], (error, result) => {
+      if (error) return reject(error);
+      if (result.length > 0) {
+        console.log({ result });
+        return resolve(result);
+      }
+      if (result.length === 0) {
+        // console.log("cek 0", result);
+        return resolve(false);
+      }
+    });
+  });
+};
+
 module.exports = {
   getUserId,
   getUserLevel,
@@ -348,4 +385,5 @@ module.exports = {
   courseSort,
   searchCourse,
   getScore,
+  facilitatorClass,
 };
