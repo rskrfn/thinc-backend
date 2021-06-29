@@ -84,31 +84,31 @@ let deletecourse = (coursename) => {
   });
 };
 
-let myClass = (userId) => {
+let myClass = (userId, page) => {
   return new Promise((resolve, reject) => {
     // console.log("halo");
     let myclassquery =
-      "SELECT c.id AS 'id', c.course_name AS 'Name', cat.category AS 'Category', c.description AS 'Description', cl.level_name AS 'Level', c.price AS 'Price' FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN user_course uc ON c.id = uc.course_id JOIN course_category cat ON cat.id = c.id_category WHERE uc.user_id = ?";
-    db.query(myclassquery, userId, function (err, result) {
+      "SELECT c.id AS 'id', c.course_name AS 'Name', cat.category AS 'Category', c.description AS 'Description', cl.level_name AS 'Level', c.price AS 'Price' FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN user_course uc ON c.id = uc.course_id JOIN course_category cat ON cat.id = c.id_category WHERE uc.user_id = ? ORDER BY uc.id DESC LIMIT ? OFFSET ?";
+    const limit = 8;
+    const currpage = page !== undefined ? Number(page) : 1;
+    const offset = (page - 1) * limit;
+    db.query(myclassquery, [userId, limit, offset], function (err, result) {
       if (err) return reject(err);
-      if (result.length === 0) {
-        return resolve(false);
-      }
-      return resolve(result);
-    });
-  });
-};
-
-let newClass = (userId) => {
-  return new Promise((resolve, reject) => {
-    let newclassquery =
-      "SELECT c.id AS 'id', c.course_name AS 'Name', cat.category AS 'Category', c.description AS 'Description', cl.level_name AS 'Level', c.price AS 'Price' FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category cat ON cat.id = c.id_category WHERE c.id NOT IN (SELECT user_course.course_id FROM user_course WHERE user_course.user_id = ?)";
-    db.query(newclassquery, [userId], function (err, result) {
-      if (err) return reject(err);
-      if (result.length === 0) {
-        return reject(result);
-      }
-      return resolve(result);
+      const countquery =
+        "SELECT COUNT(*) AS count FROM courses c JOIN user_course uc ON c.id = uc.course_id WHERE uc.user_id = ?";
+      db.query(countquery, userId, (err, resultcount) => {
+        if (err) return reject(err);
+        console.log(resultcount);
+        let count = resultcount[0].count;
+        let finalResult = {
+          count,
+          currpage,
+          limit,
+          result,
+        };
+        // console.log(finalResult);
+        return resolve(finalResult);
+      });
     });
   });
 };
@@ -196,7 +196,7 @@ let getNewClassNew = (
         "SELECT COUNT(*) AS 'count' FROM courses c WHERE c.id NOT IN (SELECT uc.course_id FROM user_course uc WHERE uc.user_id = ?)";
       db.query(qsCount, userid, (err, countres) => {
         if (err) return reject(err);
-        console.log("countres", countres);
+        // console.log("countres", countres);
         let count = countres[0].count;
         let finalResult = {
           count,
@@ -370,6 +370,53 @@ const facilitatorClass = (id) => {
   });
 };
 
+const getFacilitatorSchedule = (id, schedule) => {
+  return new Promise((resolve, reject) => {
+    const query = `SELECT c.id, c.course_name , ct.category, c.description, c.schedule, c.start_time, c.end_time, COUNT(uc.user_id) AS students FROM courses c JOIN user_course uc ON c.id = uc.course_id  JOIN course_category ct ON c.id_category = ct.id WHERE c.id_facilitator = ? && c.schedule = ? GROUP BY c.id UNION SELECT c.id, c.course_name, ct.category, c.description, c.schedule, c.start_time, c.end_time, 0 as students FROM courses c JOIN course_category ct ON c.id_category = ct.id WHERE c.id_facilitator = ? && c.schedule = ? && c.course_name NOT IN (SELECT c.course_name FROM courses c JOIN user_course uc ON c.id = uc.course_id) ORDER BY start_time`;
+    db.query(query, [id, schedule, id, schedule], (error, result) => {
+      if (error) return reject(error);
+      if (result.length > 0) {
+        console.log({ result });
+        return resolve(result);
+      }
+      if (result.length === 0) {
+        return resolve(false);
+      }
+    });
+  });
+};
+
+const getAllSchedule = (date) => {
+  return new Promise((resolve, reject) => {
+    const query = "SELECT * FROM courses c WHERE c.schedule = ? ORDER BY c.start_time ASC";
+    db.query(query, date, (error, result) => {
+      if (error) return reject(error);
+      if (result.length > 0) {
+        return resolve(result);
+      }
+      if (result.length === 0) {
+        return resolve(false);
+      }
+    });
+  });
+};
+
+const getScheduleUser = (userid, schedule) => {
+  return new Promise((resolve, reject) => {
+    const query =
+      "SELECT c.id, c.course_name, cc.category, c.description, cl.level_name AS 'level', c.schedule, c.start_time, c.end_time FROM courses c JOIN user_course uc ON c.id = uc.course_id JOIN course_category cc ON c.id_category = cc.id JOIN course_level cl ON c.course_level = cl.level_id WHERE uc.user_id = ? && c.schedule = ? ORDER BY c.start_time ASC";
+    db.query(query, [userid, schedule], (error, result) => {
+      if (error) return reject(error);
+      if (result.length > 0) {
+        return resolve(result);
+      }
+      if (result.length === 0) {
+        return resolve(false);
+      }
+    });
+  });
+};
+
 module.exports = {
   getUserId,
   getUserLevel,
@@ -377,7 +424,6 @@ module.exports = {
   deletecourse,
   searchcourse,
   myClass,
-  newClass,
   getSubCoursesObjective,
   registerCourse,
   courseSearch,
@@ -386,4 +432,7 @@ module.exports = {
   searchCourse,
   getScore,
   facilitatorClass,
+  getFacilitatorSchedule,
+  getAllSchedule,
+  getScheduleUser,
 };

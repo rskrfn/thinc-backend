@@ -6,11 +6,12 @@ let {
   courseSort,
   searchCourse,
   myClass,
-  newClass,
   registerCourse,
   getSubCoursesObjective,
   getScore,
   getNewClassNew,
+  getAllSchedule,
+  getScheduleUser,
 } = require("../models/Course");
 
 const userRegisterCourse = async (req, res) => {
@@ -37,6 +38,51 @@ const getAllCourses = async (req, res) => {
     return writeResponse(res, false, 500, err);
   }
 };
+const getMyClass = async (req, res) => {
+  let { baseUrl, path, hostname, protocol } = req;
+  let { id, page } = req.query;
+  try {
+    if (!id || !page) {
+      return writeResponse(res, false, 401, "Missing query params");
+    }
+    if (page < 1) {
+      return writeError(res, 400, "Page query must be above 0");
+    }
+    let MyClass = await myClass(id, page);
+    // console.log(MyClass);
+    const { count, currpage, limit, result } = MyClass;
+    console.log(MyClass);
+    let totalPage = Math.ceil(count / limit);
+    if (currpage > totalPage) {
+      return writeError(
+        res,
+        404,
+        `Data cannot be found on page ${currpage}, please go back to previous page`
+      );
+    }
+    if (currpage <= totalPage) {
+      const url =
+        protocol +
+        "://" +
+        hostname +
+        ":" +
+        process.env.PORT +
+        baseUrl +
+        path +
+        "?id=" +
+        id +
+        "&";
+      let prev = page <= 1 ? null : url + `page=${currpage - 1}`;
+      let next = currpage === totalPage ? null : url + `page=${currpage + 1}`;
+      const info = { count, currpage, totalPage, next, prev };
+      const display = { info, result };
+      return writeResponse(res, true, 200, "Data Recieved", display);
+    }
+  } catch (err) {
+    return console.log(err);
+  }
+};
+
 const newClassPaginated = async (req, res) => {
   try {
     let { baseUrl, path, hostname, protocol } = req;
@@ -150,37 +196,6 @@ const searchCoursebyName = async (req, res) => {
   }
 };
 
-const getMyClass = async (req, res) => {
-  let userId = req.query.id;
-  try {
-    if (!userId) {
-      return writeResponse(res, false, 401, "Missing userId params");
-    }
-    let MyClass = await myClass(userId);
-    // console.log(MyClass);
-    if (!MyClass) {
-      return writeError(res, 404, "No Data");
-    }
-    return writeResponse(res, true, 200, "Data Recieved", MyClass);
-  } catch (err) {
-    return console.log(err);
-  }
-};
-
-const getNewClass = async (req, res) => {
-  const userId = req.query.id;
-  console.log(req);
-  try {
-    if (!userId) {
-      return writeResponse(res, false, 400, "Missing userId params");
-    }
-    let NewClass = await newClass(userId);
-    return writeResponse(res, true, 200, "Data Recieved", NewClass);
-  } catch (err) {
-    return writeError(res, err);
-  }
-};
-
 const getObjective = async (req, res) => {
   let courseId = req.query.courseid;
   // console.log(req.query);
@@ -236,14 +251,47 @@ const getUserScore = async (req, res) => {
   }
 };
 
+const allSchedule = async (req, res) => {
+  let { schedule } = req.query;
+  try {
+    if (!schedule) {
+      return writeError(res, 400, "Missing params");
+    }
+    let result = await getAllSchedule(schedule);
+    if (!result) {
+      return writeError(res, 404, "Data not found");
+    }
+    return writeResponse(res, true, 200, "Data found", result);
+  } catch (err) {
+    return writeError(res, 500, "Error Occured", { err });
+  }
+};
+
+const foryou = async (req, res) => {
+  let { schedule, userid } = req.query;
+  try {
+    if (!schedule || !userid) {
+      return writeError(res, 400, "Missing params");
+    }
+    let result = await getScheduleUser(userid, schedule);
+    if (!result) {
+      return writeError(res, 404, "Data not found");
+    }
+    return writeResponse(res, true, 200, "Data found", result);
+  } catch (err) {
+    return writeError(res, 500, "Error Occured", { err });
+  }
+};
+
 module.exports = {
   getAllCourses,
   newClassPaginated,
   getMyClass,
-  getNewClass,
   getObjective,
   coursesSort,
   searchCoursebyName,
   userRegisterCourse,
   getUserScore,
+  allSchedule,
+  foryou,
 };

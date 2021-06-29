@@ -4,6 +4,7 @@ let {
   deletecourse,
   searchcourse,
   facilitatorClass,
+  getFacilitatorSchedule,
 } = require("../models/Course");
 let { writeResponse, writeError } = require("../helpers/Response");
 
@@ -117,8 +118,25 @@ const getFacilitatorClass = async (req, res) => {
   }
 };
 
+const facilitatorSchedule = async (req, res) => {
+  const { id, schedule } = req.query;
+  try {
+    if (!id || !schedule) {
+      return writeError(res, 400, "Missing query");
+    }
+    const result = await getFacilitatorSchedule(id, schedule);
+    if (!result) {
+      return writeResponse(res, true, 404, "No schedule found");
+    }
+    return writeResponse(res, true, 200, "Data Found", result);
+  } catch (err) {
+    return writeError(res, 500, "Error Occured");
+  }
+};
+
 module.exports = {
   createCourse,
   deleteCourse,
   getFacilitatorClass,
+  facilitatorSchedule,
 };
