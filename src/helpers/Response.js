@@ -7,12 +7,13 @@ let writeResponse = (res, success, status, message, data) => {
   res.status(status).json(response);
 };
 
-let writeError = (res, status, message) => {
+let writeError = (res, status, message, data) => {
   let success = false;
   let error = {
     success,
     status,
     message,
+    data,
   };
   res.status(status).json(error);
 };

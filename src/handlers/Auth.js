@@ -23,7 +23,7 @@ const userRegister = async (req, res) => {
     }
   };
   let nameValidation = () => {
-    let reg = /^[a-zA-Z ]*$/;
+    let reg = /^[a-z ,.'-]+$/i;
     if (!reg.test(name)) {
       return false;
     } else {
@@ -40,7 +40,7 @@ const userRegister = async (req, res) => {
     password = password.trim();
     let splittedName = name.split(" ");
     if (!nameValidation()) {
-      return writeError(res, 406, "Name can only contain alphabets");
+      return writeError(res, 406, "Name cannot contain special characters");
     }
     if (!splittedName[1]) {
       return writeError(res, 406, "Fullname required");

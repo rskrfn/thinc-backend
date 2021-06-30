@@ -114,7 +114,7 @@ const getFacilitatorClass = async (req, res) => {
     }
     return writeResponse(res, true, 200, "Data Found", result);
   } catch (err) {
-    return writeError(res, 500, "Error occured");
+    return writeError(res, 500, "Error occured", err);
   }
 };
 

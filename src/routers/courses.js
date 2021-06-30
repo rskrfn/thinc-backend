@@ -4,13 +4,13 @@ const Router = require("express").Router();
 let {
   newClassPaginated,
   getMyClass,
-  getNewClass,
   searchCoursebyName,
   userRegisterCourse,
   getObjective,
   getUserScore,
   allSchedule,
   foryou,
+  getClassMember,
 } = require("../handlers/Courses");
 let {
   createCourse,
@@ -38,6 +38,7 @@ Router.get(
   authorize.facilitatorOnly,
   facilitatorSchedule
 );
+Router.get("/classmember", authorize.facilitatorOnly, getClassMember);
 Router.get("/facilitatorclass", authorize.facilitatorOnly, getFacilitatorClass);
 Router.post("/addcourse", authorize.facilitatorOnly, createCourse);
 Router.delete("/deletecourse", authorize.facilitatorOnly, deleteCourse);

@@ -88,12 +88,15 @@ let myClass = (userId, page) => {
   return new Promise((resolve, reject) => {
     // console.log("halo");
     let myclassquery =
-      "SELECT c.id AS 'id', c.course_name AS 'Name', cat.category AS 'Category', c.description AS 'Description', cl.level_name AS 'Level', c.price AS 'Price' FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN user_course uc ON c.id = uc.course_id JOIN course_category cat ON cat.id = c.id_category WHERE uc.user_id = ? ORDER BY uc.id DESC LIMIT ? OFFSET ?";
+      "SELECT c.id AS 'id', c.course_name AS 'Name', cat.category AS 'Category', c.description AS 'Description', cl.level_name AS 'Level', c.price AS 'Price', (SELECT COUNT(*) FROM score s LEFT JOIN user_course uc ON uc.id = s.id_user_course WHERE uc.user_id = ? and uc.course_id = c.id and s.score IS NOT NULL) as progress ,(SELECT COUNT(*) FROM subcourses sc WHERE sc.course_id = c.id) AS totalsubcourse, (SELECT AVG(DISTINCT s.score) FROM score s LEFT JOIN user_course uc ON uc.id = s.id_user_course WHERE uc.user_id = ? and uc.course_id = c.id) as score  FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN user_course uc ON c.id = uc.course_id JOIN course_category cat ON cat.id = c.id_category WHERE uc.user_id = ? ORDER BY uc.id DESC LIMIT ? OFFSET ?";
     const limit = 8;
     const currpage = page !== undefined ? Number(page) : 1;
     const offset = (page - 1) * limit;
-    db.query(myclassquery, [userId, limit, offset], function (err, result) {
+    db.query(myclassquery, [userId, userId, userId, limit, offset], function (err, result) {
       if (err) return reject(err);
+      if (result.length === 0) {
+        return resolve(false);
+      }
       const countquery =
         "SELECT COUNT(*) AS count FROM courses c JOIN user_course uc ON c.id = uc.course_id WHERE uc.user_id = ?";
       db.query(countquery, userId, (err, resultcount) => {
@@ -355,7 +358,7 @@ let registerCourse = (userid, courseid) => {
 
 const facilitatorClass = (id) => {
   return new Promise((resolve, reject) => {
-    const qs = `SELECT c.id as course_id, c.course_name as course_name, ct.category as category, c.description, c.schedule, c.start_time, c.end_time, 0 as students, c.backdrop FROM courses c JOIN course_category ct ON c.id_category = ct.id WHERE c.id_facilitator = ? && c.course_name NOT IN (SELECT c.course_name FROM courses c JOIN user_course uc ON c.id = uc.course_id) UNION SELECT c.id as course_id, c.course_name as course_name, ct.category as category, c.description, c.schedule, c.start_time, c.end_time, COUNT(uc.user_id) AS students, c.backdrop FROM courses c JOIN user_course uc ON c.id = uc.course_id  JOIN course_category ct ON c.id_category = ct.id WHERE c.id_facilitator = ? GROUP BY c.id ORDER BY course_id DESC`;
+    const qs = `SELECT c.id as course_id, c.course_name as course_name, ct.category as category, cl.level_name as level, c.description AS Description, c.schedule, c.start_time, c.end_time, 0 as students, c.backdrop, c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category ct ON c.id_category = ct.id WHERE c.id_facilitator = ? && c.course_name NOT IN (SELECT c.course_name FROM courses c JOIN user_course uc ON c.id = uc.course_id) UNION SELECT c.id as course_id, c.course_name as course_name, ct.category as category, cl.level_name as level, c.description, c.schedule, c.start_time, c.end_time, COUNT(uc.user_id) AS students, c.backdrop, c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN user_course uc ON c.id = uc.course_id  JOIN course_category ct ON c.id_category = ct.id WHERE c.id_facilitator = ? GROUP BY c.id ORDER BY course_id DESC`;
     db.query(qs, [id, id], (error, result) => {
       if (error) return reject(error);
       if (result.length > 0) {
@@ -388,7 +391,8 @@ const getFacilitatorSchedule = (id, schedule) => {
 
 const getAllSchedule = (date) => {
   return new Promise((resolve, reject) => {
-    const query = "SELECT * FROM courses c WHERE c.schedule = ? ORDER BY c.start_time ASC";
+    const query =
+      "SELECT * FROM courses c WHERE c.schedule = ? ORDER BY c.start_time ASC";
     db.query(query, date, (error, result) => {
       if (error) return reject(error);
       if (result.length > 0) {
@@ -404,9 +408,33 @@ const getAllSchedule = (date) => {
 const getScheduleUser = (userid, schedule) => {
   return new Promise((resolve, reject) => {
     const query =
-      "SELECT c.id, c.course_name, cc.category, c.description, cl.level_name AS 'level', c.schedule, c.start_time, c.end_time FROM courses c JOIN user_course uc ON c.id = uc.course_id JOIN course_category cc ON c.id_category = cc.id JOIN course_level cl ON c.course_level = cl.level_id WHERE uc.user_id = ? && c.schedule = ? ORDER BY c.start_time ASC";
-    db.query(query, [userid, schedule], (error, result) => {
+      "SELECT c.id, c.course_name, cc.category, c.description, cl.level_name AS 'level', c.schedule, c.start_time, c.end_time, (SELECT COUNT(*) FROM score s LEFT JOIN user_course uc ON uc.id = s.id_user_course WHERE uc.user_id = ? and uc.course_id = c.id and s.score IS NOT NULL) as progress ,(SELECT COUNT(*) FROM subcourses sc WHERE sc.course_id = c.id) AS totalsubcourse FROM courses c JOIN user_course uc ON c.id = uc.course_id JOIN course_category cc ON c.id_category = cc.id JOIN course_level cl ON c.course_level = cl.level_id WHERE uc.user_id = ? && c.schedule = ? ORDER BY c.start_time ASC";
+    db.query(query, [userid, userid, schedule], (error, result) => {
       if (error) return reject(error);
+      if (result.length > 0) {
+        return resolve(result);
+      }
+      if (result.length === 0) {
+        return resolve(false);
+      }
+    });
+  });
+};
+
+// const coba = (userid, schedule) =>{
+//   return new Promise((resolve, reject) => {
+//     const countall = ""
+//   })
+// }
+const classMember = (courseid) => {
+  return new Promise((resolve, reject) => {
+    const query =
+      "SELECT u.id, u.name, u.display_picture FROM users u LEFT JOIN user_course uc ON uc.user_id = u.id WHERE uc.course_id = ?";
+    db.query(query, [courseid], (err, result) => {
+      if (err) {
+        console.log(err);
+        return reject(err);
+      }
       if (result.length > 0) {
         return resolve(result);
       }
@@ -435,4 +463,5 @@ module.exports = {
   getFacilitatorSchedule,
   getAllSchedule,
   getScheduleUser,
+  classMember,
 };

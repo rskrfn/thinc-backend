@@ -12,6 +12,7 @@ let {
   getNewClassNew,
   getAllSchedule,
   getScheduleUser,
+  classMember,
 } = require("../models/Course");
 
 const userRegisterCourse = async (req, res) => {
@@ -49,9 +50,11 @@ const getMyClass = async (req, res) => {
       return writeError(res, 400, "Page query must be above 0");
     }
     let MyClass = await myClass(id, page);
-    // console.log(MyClass);
-    const { count, currpage, limit, result } = MyClass;
+    if (MyClass === false) {
+      return writeResponse(res, false, 404, "Data not found");
+    }
     console.log(MyClass);
+    const { count, currpage, limit, result } = MyClass;
     let totalPage = Math.ceil(count / limit);
     if (currpage > totalPage) {
       return writeError(
@@ -271,11 +274,27 @@ const foryou = async (req, res) => {
   let { schedule, userid } = req.query;
   try {
     if (!schedule || !userid) {
-      return writeError(res, 400, "Missing params");
+      return writeError(res, 400, "Missing query params");
     }
     let result = await getScheduleUser(userid, schedule);
     if (!result) {
       return writeError(res, 404, "Data not found");
+    }
+    return writeResponse(res, true, 200, "Data found", result);
+  } catch (err) {
+    return writeError(res, 500, "Error Occured", { err });
+  }
+};
+
+const getClassMember = async (req, res) => {
+  let { courseid } = req.query;
+  try {
+    if (!courseid) {
+      return writeError(res, 400, "Missing query params");
+    }
+    const result = await classMember(courseid);
+    if (result === false) {
+      return writeResponse(res, true, 404, "No data found");
     }
     return writeResponse(res, true, 200, "Data found", result);
   } catch (err) {
@@ -294,4 +313,5 @@ module.exports = {
   getUserScore,
   allSchedule,
   foryou,
+  getClassMember,
 };
