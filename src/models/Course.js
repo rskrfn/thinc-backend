@@ -92,27 +92,31 @@ let myClass = (userId, page) => {
     const limit = 8;
     const currpage = page !== undefined ? Number(page) : 1;
     const offset = (page - 1) * limit;
-    db.query(myclassquery, [userId, userId, userId, limit, offset], function (err, result) {
-      if (err) return reject(err);
-      if (result.length === 0) {
-        return resolve(false);
-      }
-      const countquery =
-        "SELECT COUNT(*) AS count FROM courses c JOIN user_course uc ON c.id = uc.course_id WHERE uc.user_id = ?";
-      db.query(countquery, userId, (err, resultcount) => {
+    db.query(
+      myclassquery,
+      [userId, userId, userId, limit, offset],
+      function (err, result) {
         if (err) return reject(err);
-        console.log(resultcount);
-        let count = resultcount[0].count;
-        let finalResult = {
-          count,
-          currpage,
-          limit,
-          result,
-        };
-        // console.log(finalResult);
-        return resolve(finalResult);
-      });
-    });
+        if (result.length === 0) {
+          return resolve(false);
+        }
+        const countquery =
+          "SELECT COUNT(*) AS count FROM courses c JOIN user_course uc ON c.id = uc.course_id WHERE uc.user_id = ?";
+        db.query(countquery, userId, (err, resultcount) => {
+          if (err) return reject(err);
+          console.log(resultcount);
+          let count = resultcount[0].count;
+          let finalResult = {
+            count,
+            currpage,
+            limit,
+            result,
+          };
+          // console.log(finalResult);
+          return resolve(finalResult);
+        });
+      }
+    );
   });
 };
 
@@ -358,15 +362,18 @@ let registerCourse = (userid, courseid) => {
 
 const facilitatorClass = (id) => {
   return new Promise((resolve, reject) => {
-    const qs = `SELECT c.id as course_id, c.course_name as course_name, ct.category as category, cl.level_name as level, c.description AS Description, c.schedule, c.start_time, c.end_time, 0 as students, c.backdrop, c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category ct ON c.id_category = ct.id WHERE c.id_facilitator = ? && c.course_name NOT IN (SELECT c.course_name FROM courses c JOIN user_course uc ON c.id = uc.course_id) UNION SELECT c.id as course_id, c.course_name as course_name, ct.category as category, cl.level_name as level, c.description, c.schedule, c.start_time, c.end_time, COUNT(uc.user_id) AS students, c.backdrop, c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN user_course uc ON c.id = uc.course_id  JOIN course_category ct ON c.id_category = ct.id WHERE c.id_facilitator = ? GROUP BY c.id ORDER BY course_id DESC`;
+    const qs = `SELECT c.id as course_id, c.course_name as course_name, ct.category as category, cl.level_name as level, c.description AS Description, c.schedule, c.start_time, c.end_time, 0 as students, c.backdrop, c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN course_category ct ON c.id_category = ct.id WHERE c.id_facilitator = ? && c.course_name NOT IN (SELECT c.course_name FROM courses c JOIN user_course uc ON c.id = uc.course_id) UNION SELECT c.id as course_id, c.course_name as course_name, ct.category as category, cl.level_name as level, c.description AS Description, c.schedule, c.start_time, c.end_time, COUNT(uc.user_id) AS students, c.backdrop, c.price FROM courses c JOIN course_level cl ON cl.level_id = c.course_level JOIN user_course uc ON c.id = uc.course_id  JOIN course_category ct ON c.id_category = ct.id WHERE c.id_facilitator = ? GROUP BY c.id ORDER BY course_id DESC`;
     db.query(qs, [id, id], (error, result) => {
-      if (error) return reject(error);
+      if (error) {
+        console.log(error);
+        return reject(error);
+      }
       if (result.length > 0) {
         console.log({ result });
         return resolve(result);
       }
       if (result.length === 0) {
-        // console.log("cek 0", result);
+        console.log("cek", result);
         return resolve(false);
       }
     });
