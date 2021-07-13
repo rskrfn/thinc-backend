@@ -15,7 +15,7 @@ const getScore = async (req, res) => {
     }
   } catch (err) {
     return writeError(res, 500, "", err);
-  }7
+  }
 };
 
 module.exports = {
