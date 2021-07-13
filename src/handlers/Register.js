@@ -19,9 +19,13 @@ const register = async (req, res) => {
       return writeResponse(res, false, 400, "Email Already Registered");
     }
     await registerUser(name, username, email, password);
-    return writeResponse(res, true, 200, "Registered Successfully", {name, username, email});
+    return writeResponse(res, true, 200, "Registered Successfully", {
+      name,
+      username,
+      email,
+    });
   } catch (err) {
-    return writeError(res, 400, "Failed", err);
+    return writeError(res, 500, "Failed", { err });
   }
 };
 

@@ -180,7 +180,7 @@ const newClassPaginated = async (req, res) => {
       return writeResponse(res, true, 200, "Data Received", display);
     }
   } catch (err) {
-    return console.log(err);
+    return writeError(res, 500, "", { err });
   }
 };
 
@@ -195,7 +195,7 @@ const searchCoursebyName = async (req, res) => {
     let SearchCourse = await searchCourse(searchValue);
     return writeResponse(res, true, 200, SearchCourse);
   } catch (err) {
-    return writeError(res, err);
+    return writeError(res, 500, "", err);
   }
 };
 
@@ -209,7 +209,7 @@ const getObjective = async (req, res) => {
     let objectives = await getSubCoursesObjective(courseId);
     return writeResponse(res, true, 200, "Data Found", objectives);
   } catch (err) {
-    return writeError(res, err);
+    return writeError(res, 500, "", err);
   }
 };
 
@@ -234,7 +234,7 @@ const coursesSort = async (req, res) => {
     console.log(SortCourse);
     return writeResponse(res, true, 200, "Data Received", SortCourse);
   } catch (err) {
-    return writeError(res, 500, err);
+    return writeError(res, 500, "", err);
   }
 };
 const getUserScore = async (req, res) => {
@@ -250,7 +250,7 @@ const getUserScore = async (req, res) => {
     return writeResponse(res, true, 200, "Coba", result);
   } catch (err) {
     // console.log(err);
-    return writeError(res, 500, err);
+    return writeError(res, 500, "", err);
   }
 };
 

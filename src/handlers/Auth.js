@@ -81,7 +81,7 @@ const userRegister = async (req, res) => {
     return writeResponse(res, true, 200, "Registered Successfully");
   } catch (err) {
     console.log(err);
-    return writeError(res, 500, err);
+    return writeError(res, 500, "", err);
   }
 };
 
@@ -106,7 +106,7 @@ const userLogin = async (req, res) => {
       token: UserAuth.token,
     });
   } catch (err) {
-    return writeError(res, err);
+    return writeError(res, 500, "", err);
   }
 };
 

@@ -36,7 +36,6 @@ const emailLookup = async (req, res) => {
 const sendEmail = async (req, res) => {
   const code = Math.floor(1000 + Math.random() * 9000);
   let expire = dayjs.utc().add(3, "hour").format();
-
   let { email } = req.body;
   let account = {
     email: process.env.EMAIL,
@@ -91,18 +90,17 @@ const sendEmail = async (req, res) => {
       return writeError(res, 500, "Failed to create OTP code");
     }
     console.log(createotp);
-    await sendVerification(code);
+    sendVerification(code);
     // console.log(sendcode);
     return writeResponse(res, true, 200, "Email Sent");
   } catch (err) {
-    console.log(err);
-    return writeError(res, 500, err);
+    // console.log(err);
+    return writeError(res, 500, { err });
   }
 };
 
 const passwordUpdate = async (req, res) => {
   let { email, newpassword } = req.body;
-
   try {
     if (!email || !newpassword) {
       return writeResponse(res, false, 400, "An Empty Field");
@@ -115,7 +113,7 @@ const passwordUpdate = async (req, res) => {
     await deleteOTP(emailAvailable);
     return writeResponse(res, true, 200, "Password Changed");
   } catch (err) {
-    return writeError(res, err);
+    return writeError(res, 500, { err });
   }
 };
 
@@ -168,8 +166,8 @@ const validateOTP = async (req, res) => {
     }
     return writeResponse(res, true, 200, "OTP valid");
   } catch (err) {
-    console.log(err)
-    return writeError(res, 500, "err");
+    console.log(err);
+    return writeError(res, 500, "", { err });
   }
 };
 

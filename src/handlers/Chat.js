@@ -13,7 +13,7 @@ const getAllUsers = async (req, res) => {
     }
     return writeResponse(res, true, 200, "Data found", result);
   } catch (err) {
-    return writeError(res, 500, err);
+    return writeError(res, 500, '', {err});
   }
 };
 

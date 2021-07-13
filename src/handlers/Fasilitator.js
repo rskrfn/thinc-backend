@@ -61,7 +61,7 @@ const createCourse = async (req, res) => {
     );
     return writeResponse(res, true, 200, "Course Added");
   } catch (err) {
-    return console.log(err);
+    return writeError(res, 500, "", { err });
   }
 };
 
@@ -93,7 +93,7 @@ const deleteCourse = async (req, res) => {
     await deletecourse(coursename);
     return writeResponse(res, true, 200, coursename + " Deleted");
   } catch (err) {
-    return writeError(res, err);
+    return writeError(res, 500, "", err);
   }
 };
 

@@ -11,7 +11,7 @@ const getUser = async (req, res) => {
     }
     return writeResponse(res, true, 200, "Success", result);
   } catch (err) {
-    return writeError(res, err);
+    return writeError(res, 500, "", err);
   }
 };
 const updateProfile = async (req, res) => {
@@ -52,13 +52,13 @@ const updateProfile = async (req, res) => {
     if (err === "User Not Found") {
       return writeError(res, 404, "User not found");
     }
-    if (err === "Wrong Password") {
+    else if (err === "Wrong Password") {
       return writeError(res, 404, "Wrong Password");
     }
-    if (err === "Same Password") {
+    else if (err === "Same Password") {
       return writeError(res, 403, "Same Password");
     }
-    console.log({ err });
+    return writeError(res, 500, "", { err });
   }
 };
 

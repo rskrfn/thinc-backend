@@ -13,4 +13,9 @@ Router.use("/courses", coursesRouter);
 Router.use("/profile", profileRouter);
 //chat subrouter
 Router.use("/chat", chatRouter);
+
+// connection test
+Router.get("/test", async (req, res) => {
+  return res.send({ message: "Server is online!!" });
+});
 module.exports = Router;
