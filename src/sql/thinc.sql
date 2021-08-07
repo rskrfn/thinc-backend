@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 01, 2021 at 04:59 AM
+-- Generation Time: Aug 07, 2021 at 08:35 PM
 -- Server version: 10.4.18-MariaDB
 -- PHP Version: 7.3.27
 
@@ -151,6 +151,13 @@ CREATE TABLE `otp` (
   `valid_until` varchar(255) NOT NULL,
   `timestamp` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `otp`
+--
+
+INSERT INTO `otp` (`id`, `user_id`, `otp_code`, `valid_until`, `timestamp`) VALUES
+(66, 139, 9790, '2021-07-07T07:00:52Z', '2021-07-07 11:00:52');
 
 -- --------------------------------------------------------
 
@@ -363,8 +370,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `username`, `email`, `password`, `phone`, `display_picture`, `user_level`) VALUES
 (101, 'Emir Kharisma', 'kharismaemir', 'emirkharisma@arkademy.com', '$2b$10$kRAoS2aMEaHpxkLzYdYq9O/krP3sYC.ObMjxDjMVmG9hUpJTWPIJu', '088877776666', '/displaypicture/dp_1622776761163.jpg', 2),
-(139, 'Muhammad Ilham', 'member', 'Ilham@example.com', '$2b$10$1ew0g7Ifv2vORghzIEhoDuWl7e2iPUtnUFwCTzze7nI76nHHvfEsG', '087870720735', '/displaypicture/dp_1623039917804.jpg', 2),
-(140, 'Elenna Liandra', 'Elenn', 'alzamafero@gmail.com', '$2b$10$qWTM0st4R/1qZMyvfYI0o.UPCQNmWZYeZJVIb873xK7LUawhuQqLm', '087766663333', '/displaypicture/dp_1625021760575.jpg', 2),
+(139, 'Muhammad Ilham', 'member', 'Ilham@example.com', '$2b$10$1ew0g7Ifv2vORghzIEhoDuWl7e2iPUtnUFwCTzze7nI76nHHvfEsG', '087870720735', '/displaypicture/dp_1627983625939.jpg', 2),
+(140, 'Elenna Liandra', 'Elenn', 'alzamafero@gmail.com', '$2b$10$dhebHToG4HV1teyqJ2rnFOMBjUuuTV1fYYUkTfzq5G3kv/AM8qTkK', '087766663333', '/displaypicture/dp_1625021760575.jpg', 2),
 (148, 'Rayendra Lazuardi', 'facilitator', 'rayendra@example.com', '$2b$10$kZDOhMNoVOpSfHBvcyF8NOgkZoGl9cwb8V/l8uCOqUFAsRhc5lvnu', NULL, '/displaypicture/dp_1623108680050.jpg', 1),
 (149, 'Rinna Matteus', 'member1', 'member1@example.com', '$2b$10$zusCRkLVF1VzOR.8evtszupw..lJ2imDOXTUvhVsF.PfCvsOZ9O6a', NULL, '/displaypicture/dp_1623086095505.jpg', 2),
 (150, 'Jacob Collier', 'facilitator2', 'jacob@example.com', '$2b$10$ITkxR6ESFDhme0CXFASaGuDeLl2uH2jV8sMesCke8puiAE0rARX.G', NULL, NULL, 1);
@@ -492,7 +499,7 @@ ALTER TABLE `user_course`
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=329;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=330;
 
 --
 -- AUTO_INCREMENT for table `course_category`
@@ -516,7 +523,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `otp`
 --
 ALTER TABLE `otp`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `score`
@@ -540,7 +547,7 @@ ALTER TABLE `token_blacklist`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=153;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=154;
 
 --
 -- AUTO_INCREMENT for table `user_course`

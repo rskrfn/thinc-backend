@@ -18,4 +18,5 @@ Router.use("/chat", chatRouter);
 Router.get("/test", async (req, res) => {
   return res.send({ message: "Server is online!!" });
 });
+
 module.exports = Router;

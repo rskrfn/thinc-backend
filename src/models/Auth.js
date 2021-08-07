@@ -66,12 +66,13 @@ let loginUser = (usernameemail, password) => {
           return resolve((result = false));
         }
         if (isPassMatch === true) {
-          let { id, email, name, username, role } = result[0];
+          let { id, email, name, username, role, phone } = result[0];
           let payload = {
             id,
             name,
             email,
             username,
+            phone,
             role,
           };
           console.log(payload);
