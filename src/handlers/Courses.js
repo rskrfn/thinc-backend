@@ -18,6 +18,7 @@ let {
 const userRegisterCourse = async (req, res) => {
   try {
     let { userid, courseid } = req.body;
+    console.log("check", userid, courseid);
     let courseRegister = await registerCourse(userid, courseid);
     if (courseRegister === false) {
       return writeError(res, 400, "User is Enrolled");

@@ -9,11 +9,11 @@ const memberOnly = (req, res, next) => {
     issuer: process.env.ISSUER,
     secretkey: process.env.SECRET_KEY,
   };
-  console.log(token);
   if (!token) {
     return writeResponse(res, false, 400, "User is not logged in");
   }
   jwt.verify(token, options.secretkey, options.issuer, (err, decodedToken) => {
+    console.log(err);
     if (err && err.name === "TokenExpiredError") {
       return writeError(res, 403, err.name);
     }
@@ -21,6 +21,7 @@ const memberOnly = (req, res, next) => {
       return writeError(res, 403, err.name);
     }
     if (err) {
+      console.log(err);
       return writeError(res, false, 500, { err });
     }
     if (decodedToken.role === "Facilitator") {
